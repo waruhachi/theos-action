@@ -100,6 +100,7 @@ runs:
         cd ${{ inputs.theos-dir }}
         pwd
         ls -la
+        cat ~/.bashrc
     
     # Advanced Setup
     - name: Get Current Day and Hour
