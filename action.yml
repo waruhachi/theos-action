@@ -25,7 +25,7 @@ inputs:
   theos-cache-dir:
     description: 'Directory to cache Theos to'
     required: false
-    default: $HOME/cache/theos
+    default: ${{ github.workspace }}/cache/theos
   theosSDK-dir:
     description: 'Directory to install iOS SKs to'
     required: false
@@ -45,7 +45,7 @@ inputs:
   theosSDK-cache-dir:
     description: 'Directory to cache iOS SDKs to'
     required: false
-    default: $HOME/cache/theosSDK
+    default: ${{ github.workspace }}/cache/theosSDK
 
 runs:
   using: "composite"
@@ -56,7 +56,7 @@ runs:
       if: inputs.theos-cache == 'true'
       with:
         path: ${{ inputs.theos-dir }}
-        key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ hashFiles(inputs.theos-dir) }}
+        key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ hashFiles(${{ inputs.theos-dir }}/*) }}
 
     - name: Setup Theos SDKs cache
       id: theosSDK-cache
@@ -64,7 +64,7 @@ runs:
       if: inputs.theosSDK-cache == 'true'
       with:
         path: ${{ inputs.theosSDK-cache-dir }}
-        key: ${{ inputs.theosSDK-src }}-${{ inputs.theosSDK-branch }}-${{ hashFiles(inputs.theosSDK-dir) }}
+        key: ${{ inputs.theosSDK-src }}-${{ inputs.theosSDK-branch }}-${{ hashFiles(${{ inputs.theosSDK-dir }}/*) }}
 
     - name: Install Theos
       if: inputs.theos-cache != 'true' || steps.theos-cache.outputs.cache-hit != 'true'
