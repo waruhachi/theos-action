@@ -1,0 +1,80 @@
+name: 'Theos'
+description: 'Setup Theos and iOS SDKs'
+author: 'waruhachi'
+branding:
+  icon: dollar-sign
+  color: purple
+
+inputs:
+  theos-dir:
+    description: 'Directory to install Theos to'
+    required: false
+    default: ${{ github.workspace }}/theos
+  theos-src:
+    description: 'What repo to clone Theos from'
+    required: false
+    default: 'theos/theos'
+  theos-branch:
+    description: 'What branch to clone Theos from'
+    required: false
+    default: 'master'
+  theos-cache:
+    description: 'Cache Theos'
+    required: false
+    default: true
+  theos-cache-dir:
+    description: 'Directory to cache Theos to'
+    required: false
+    default: $HOME/cache/theos
+  theosSDK-dir:
+    description: 'Directory to install iOS SKs to'
+    required: false
+    default: ${{ github.workspace }}/theos/sdks
+  theosSDK-src:
+    description: 'What repo to clone iOS SKs from'
+    required: false
+    default: 'theos/sdks'
+  theosSDK-branch:
+    description: 'What branch to clone iOS SKs from'
+    required: false
+    default: 'master'
+  theosSDK-cache:
+    description: 'Cache iOS SDKs'
+    required: false
+    default: true
+  theosSDK-cache-dir:
+    description: 'Directory to cache iOS SDKs to'
+    required: false
+    default: $HOME/cache/theosSDK
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Theos cache
+      id: theos-cache
+      uses: actions/cache@v4
+      if: inputs.theos-cache == 'true'
+      with:
+        path: ${{ inputs.theos-dir }}
+        key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ hashFiles(inputs.theos-dir) }}
+
+    - name: Setup Theos SDKs cache
+      id: theosSDK-cache
+      uses: actions/cache@v4
+      if: inputs.theosSDK-cache == 'true'
+      with:
+        path: ${{ inputs.theosSDK-cache-dir }}
+        key: ${{ inputs.theosSDK-src }}-${{ inputs.theosSDK-branch }}-${{ hashFiles(inputs.theosSDK-dir) }}
+
+    - name: Install Theos
+      if: inputs.theos-cache != 'true' || steps.theos-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos || { echo "Failed to install Theos"; exit 1; }
+
+    - name: Install Theos SDKs
+      if: inputs.theosSDK-cache != 'true' || steps.theosSDK-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        rm -rf ${{ inputs.theos-dir }}/sdks/* 
+        curl -sL https://github.com/${{ inputs.theosSDK-src }}/archive/${{ inputs.theosSDK-branch }}.tar.gz | tar -xzf - --strip-components=1 -C ${{ inputs.theos-dir }}/sdks
