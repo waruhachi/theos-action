@@ -9,7 +9,7 @@ Currently, **only macOS runners** are supported.
 The following inputs are available (all are optional):
 
 ```yaml
-- uses: waruhachi/theos-action@v1.0.0
+- uses: waruhachi/theos-action@v2.0.0
   with:
       theos-dir: '~/theos'
       theos-src: 'theos/theos'
