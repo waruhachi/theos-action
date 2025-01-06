@@ -63,7 +63,7 @@ runs:
       shell: bash
 
     - name: Setup Theos cache
-      id: theos-cache
+      id: theos-cache-simple
       uses: actions/cache@v4
       if: inputs.advanced == 'false' && inputs.theos-cache == 'true'
       with:
@@ -71,18 +71,14 @@ runs:
         key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.get-hour.outputs.hour }}
 
     - name: Install Theos
-      if: inputs.advanced == 'false' && (inputs.theos-cache != 'true' || steps.theos-cache.outputs.cache-hit != 'true')
+      if: inputs.advanced == 'false' && (inputs.theos-cache != 'true' || steps.theos-cache-simple.outputs.cache-hit != 'true')
       shell: bash
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         bash -c "$(curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos)" || { echo "Failed to install Theos"; exit 1; }
     
     - name: Update Theos
-      if: inputs.advanced == 'false' && (inputs.theos-cache != 'true' || steps.theos-cache.outputs.cache-hit != 'true')
+      if: inputs.advanced == 'false' && (inputs.theos-cache != 'true' || steps.theos-cache-simple.outputs.cache-hit != 'true')
       shell: bash
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         $THEOS/bin/update-theos
     
