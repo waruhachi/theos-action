@@ -1,27 +1,27 @@
-name: 'Install & Setup Theos'
-description: 'Use Theos in your GitHub Actions to build iOS tweaks'
-author: 'waruhachi'
+name: "Install & Setup Theos"
+description: "Use Theos in your GitHub Actions to build iOS tweaks"
+author: "waruhachi"
 branding:
   icon: dollar-sign
   color: purple
 
 inputs:
   theos-dir:
-    description: 'Directory to install Theos to'
+    description: "Directory to install Theos to"
     required: false
-    default: '~/theos'
+    default: "~/theos"
   theos-src:
-    description: 'What repo to clone Theos from'
+    description: "What repo to clone Theos from"
     required: false
-    default: 'theos/theos'
+    default: "theos/theos"
   theos-branch:
-    description: 'What branch to clone Theos from'
+    description: "What branch to clone Theos from"
     required: false
-    default: 'master'
+    default: "master"
   theos-cache:
-    description: 'Cache Theos'
+    description: "Cache Theos"
     required: false
-    default: 'true'
+    default: "true"
 
 runs:
   using: "composite"
@@ -49,12 +49,11 @@ runs:
         brew list ldid >/dev/null 2>&1 || brew install ldid
         echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
         bash -c "$(curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos)"
-        source ~/.bashrc
-        echo "THEOS=$THEOS" >> $GITHUB_ENV
-    
+        echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
+
     - name: Update Theos
       if: inputs.theos-cache == 'true' && steps.theos-cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
-        source ~/.bashrc
+        echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
         $THEOS/bin/update-theos
