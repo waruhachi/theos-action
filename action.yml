@@ -65,7 +65,7 @@ runs:
     - name: Setup Theos cache
       id: theos-cache-simple
       uses: actions/cache@v4
-      if: inputs.advanced != 'true' && inputs.theos-cache == 'true'
+      if: inputs.advanced != 'true' && (inputs.theos-cache == 'true')
       with:
         path: ${{ inputs.theos-dir }}
         key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.cache-simple.outputs.hour }}
@@ -94,7 +94,7 @@ runs:
     - name: Setup Theos cache
       id: theos-cache-advanced
       uses: actions/cache@v4
-      if: inputs.advanced == 'true' && inputs.theos-cache == 'true'
+      if: inputs.advanced == 'true' && (inputs.theos-cache == 'true')
       with:
         path: ${{ inputs.theos-dir }}
         key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.cache-advanced.outputs.hour }}
@@ -102,19 +102,22 @@ runs:
     - name: Setup Theos SDKs cache
       id: theosSDK-cache-advanced
       uses: actions/cache@v4
-      if: inputs.advanced == 'true' && inputs.theosSDK-cache == 'true'
+      if: inputs.advanced == 'true' && (inputs.theosSDK-cache == 'true')
       with:
         path: ${{ inputs.theosSDK-cache-dir }}
         key: ${{ inputs.theosSDK-src }}-${{ inputs.theosSDK-branch }}-${{ steps.cache-advanced.outputs.day }}
 
     - name: Install Theos
-      if: inputs.advanced == 'true' && inputs.theos-cache != 'true' || steps.theos-cache-advanced.outputs.cache-hit != 'true'
+      if: inputs.advanced == 'true' && (inputs.theos-cache != 'true' || steps.theos-cache-advanced.outputs.cache-hit != 'true')
       shell: bash
       run: |
-        curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos
+        rm -rf ${{ inputs.theos-dir }}
+        git clone ${{ inputs.theos-src }} ${{ inputs.theos-dir }} --recursive
+        cd ${{ inputs.theos-dir }}
+        git -C ${{ inputs.theos-dir }} checkout ${{ inputs.theos-ref }}
 
     - name: Install Theos SDKs
-      if: inputs.advanced == 'true' && inputs.theosSDK-cache != 'true' || steps.theosSDK-cache-advanced.outputs.cache-hit != 'true'
+      if: inputs.advanced == 'true' && (inputs.theosSDK-cache != 'true' || steps.theosSDK-cache-advanced.outputs.cache-hit != 'true')
       shell: bash
       run: |
         rm -rf ${{ inputs.theos-dir }}/sdks/* 
