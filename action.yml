@@ -50,13 +50,19 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Get Current Hour
+      id: get-hour
+      run: |
+        echo "hour=$(/bin/date -u "+%H")" >> $GITHUB_OUTPUT
+      shell: bash
+
     - name: Setup Theos cache
       id: theos-cache
       uses: actions/cache@v4
       if: inputs.theos-cache == 'true'
       with:
         path: ${{ inputs.theos-dir }}
-        key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ hashFiles(format('{0}/*', inputs.theos-dir)) }}
+        key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.get-hour.outputs.hour }}
 
     - name: Setup Theos SDKs cache
       id: theosSDK-cache
@@ -64,7 +70,7 @@ runs:
       if: inputs.theosSDK-cache == 'true'
       with:
         path: ${{ inputs.theosSDK-cache-dir }}
-        key: ${{ inputs.theosSDK-src }}-${{ inputs.theosSDK-branch }}-${{ hashFiles(format('{0}/*', inputs.theosSDK-dir)) }}
+        key: ${{ inputs.theosSDK-src }}-${{ inputs.theosSDK-branch }}-${{ steps.get-hour.outputs.hour }}
 
     - name: Install Theos
       if: inputs.theos-cache != 'true' || steps.theos-cache.outputs.cache-hit != 'true'
