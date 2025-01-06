@@ -71,7 +71,7 @@ runs:
         key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.cache-simple.outputs.hour }}
 
     - name: Install Theos dependencies
-      id: install-deps
+      id: install-dependencies-simple
       if: inputs.advanced == 'true'
       shell: bash
       run: |
@@ -102,7 +102,7 @@ runs:
         echo "hour=$(/bin/date -u "+%H")" >> $GITHUB_OUTPUT
 
     - name: Install Theos dependencies
-      id: install-deps
+      id: install-dependencies-advanced
       if: inputs.advanced == 'true'
       shell: bash
       run: |
