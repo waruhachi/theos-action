@@ -17,7 +17,7 @@ Only macOS runners are supported as of right now
       # Cache Theos
       theos-cache: true
       # Directory to cache Theos to
-      theos-cache-dir: '$HOME/cache/theos'
+      theos-cache-dir: '${{ github.workspace }}/cache/theos'
       # Directory to install iOS SKs to
       theosSDK-dir: '${{ github.workspace }}/theos/sdks'
       # What repo to clone iOS SKs from
@@ -27,5 +27,5 @@ Only macOS runners are supported as of right now
       # Cache iOS SDKs
       theosSDK-cache: true
       # Directory to cache iOS SDKs to
-      theosSDK-cache-dir: '$HOME/cache/theosSDK'
+      theosSDK-cache-dir: '${{ github.workspace }}/cache/theosSDK'
 ```
