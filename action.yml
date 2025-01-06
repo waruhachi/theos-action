@@ -54,7 +54,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    # Non advanced setup
+    # Simple Setup
     - name: Get Current Hour
       id: get-hour
       if: inputs.advanced == 'false'
@@ -80,9 +80,9 @@ runs:
       if: inputs.advanced == 'false' && (inputs.theos-cache != 'true' || steps.theos-cache-simple.outputs.cache-hit != 'true')
       shell: bash
       run: |
-        $THEOS/bin/update-theos
+        source ~/.bashrc && $THEOS/bin/update-theos
     
-    # Advanced setup
+    # Advanced Setup
     - name: Setup Theos cache
       id: theos-cache
       uses: actions/cache@v4
