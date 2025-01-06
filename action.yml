@@ -71,13 +71,15 @@ runs:
         key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.get-hour.outputs.hour }}
 
     - name: Install Theos
-      if: inputs.advanced == 'false' && inputs.theos-cache == 'false' || steps.theos-cache.outputs.cache-hit == 'false'
+      if: inputs.advanced == 'false' && (inputs.theos-cache != 'true' || steps.theos-cache.outputs.cache-hit != 'true')
       shell: bash
       run: |
         bash -c "$(curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos)" || { echo "Failed to install Theos"; exit 1; }
     
     - name: Update Theos
-      if: inputs.advanced == 'false' && (inputs.theos-cache == 'false' || steps.theos-cache.outputs.cache-hit == 'false')
+      if: inputs.advanced == 'false' && (inputs.theos-cache != 'true' || steps.theos-cache.outputs.cache-hit != 'true')
       shell: bash
       run: |
         $THEOS/bin/update-theos
+    
+    # Advanced setup
