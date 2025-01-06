@@ -49,10 +49,12 @@ runs:
         brew list ldid >/dev/null 2>&1 || brew install ldid
         echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
         bash -c "$(curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos)"
-        echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
+        source ~/.bashrc
+        echo "THEOS=$THEOS" >> $GITHUB_ENV
     
     - name: Update Theos
       if: inputs.theos-cache == 'true' && steps.theos-cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
+        source ~/.bashrc
         $THEOS/bin/update-theos
