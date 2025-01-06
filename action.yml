@@ -1,5 +1,5 @@
-name: 'Theos'
-description: 'Setup Theos and iOS SDKs'
+name: 'Install & Setup Theos'
+description: 'Use Theos in your GitHub Actions to build iOS tweaks'
 author: 'waruhachi'
 branding:
   icon: dollar-sign
