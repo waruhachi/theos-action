@@ -54,12 +54,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    # Simple Setup
-    - name: Check GitHub API Rate Limit
-      run: |
-        curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-          https://api.github.com/rate_limit
- 
+    # Simple Setup 
     - name: Get Current Hour
       id: get-hour
       if: inputs.advanced == 'false'
