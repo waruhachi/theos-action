@@ -57,5 +57,6 @@ runs:
       shell: bash
       run: |
         echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
+        echo "export THEOS" >> ~/.bashrc
         source ~/.bashrc
         $THEOS/bin/update-theos
