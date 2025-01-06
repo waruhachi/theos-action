@@ -58,4 +58,4 @@ runs:
       run: |
         echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
         source ~/.bashrc
-        ${{ inputs.theos-dir }}/bin/update-theos
+        $THEOS/bin/update-theos
