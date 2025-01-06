@@ -62,14 +62,6 @@ runs:
       run: |
         echo "hour=$(/bin/date -u "+%H")" >> $GITHUB_OUTPUT
 
-    - name: Setup Theos cache
-      id: theos-cache-simple
-      uses: actions/cache@v4
-      if: inputs.advanced != 'true' && (inputs.theos-cache == 'true')
-      with:
-        path: ${{ inputs.theos-dir }}
-        key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.cache-simple.outputs.hour }}
-
     - name: Install Theos dependencies
       id: install-dependencies-simple
       if: inputs.advanced == 'true'
@@ -79,6 +71,14 @@ runs:
         brew list make >/dev/null 2>&1 || brew install make
         brew list ldid >/dev/null 2>&1 || brew install ldid
         echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
+
+    - name: Setup Theos cache
+      id: theos-cache-simple
+      uses: actions/cache@v4
+      if: inputs.advanced != 'true' && (inputs.theos-cache == 'true')
+      with:
+        path: ${{ inputs.theos-dir }}
+        key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.cache-simple.outputs.hour }}
 
     - name: Install Theos
       if: inputs.advanced != 'true' && (inputs.theos-cache != 'true' || steps.theos-cache-simple.outputs.cache-hit != 'true')
@@ -96,11 +96,8 @@ runs:
       if : inputs.advanced != 'true'
       shell: bash
       run: |
-        echo "THEOS: $THEOS"
-        cd ${{ inputs.theos-dir }}
-        pwd
-        ls -la
-        cat ~/.bashrc
+        echo $THEOS
+        ls -la ${{ inputs.theos-dir }}
     
     # Advanced Setup
     - name: Get Current Day and Hour
