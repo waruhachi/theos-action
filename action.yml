@@ -90,7 +90,7 @@ runs:
       if: inputs.advanced != 'true' && (inputs.theos-cache != 'true' || steps.theos-cache-simple.outputs.cache-hit != 'true')
       shell: bash
       run: |
-        source ~/.bashrc && source ~/.zshrc && $THEOS/bin/update-theos
+        source ~/.bashrc && $THEOS/bin/update-theos
 
     - name: Export THEOS Environment Variable
       shell: bash
@@ -152,7 +152,7 @@ runs:
       if: inputs.advanced == 'true' && (inputs.theos-cache != 'true' || steps.theos-cache-advanced.outputs.cache-hit != 'true')
       shell: bash
       run: |
-        source ~/.bashrc && source ~/.zshrc && $THEOS/bin/update-theos
+        source ~/.bashrc && $THEOS/bin/update-theos
     
     - name: Export THEOS Environment Variable
       shell: bash
