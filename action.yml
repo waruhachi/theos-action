@@ -70,6 +70,16 @@ runs:
         path: ${{ inputs.theos-dir }}
         key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.cache-simple.outputs.hour }}
 
+    - name: Install Theos dependencies
+      id: install-deps
+      if: inputs.advanced == 'true'
+      shell: bash
+      run: |
+        brew list xz >/dev/null 2>&1 || brew install xz
+        brew list make >/dev/null 2>&1 || brew install make
+        brew list ldid >/dev/null 2>&1 || brew install ldid
+        echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
+
     - name: Install Theos
       if: inputs.advanced != 'true' && (inputs.theos-cache != 'true' || steps.theos-cache-simple.outputs.cache-hit != 'true')
       shell: bash
@@ -90,6 +100,16 @@ runs:
       run: |
         echo "day=$(date -u +%Y-%m-%d)" >> $GITHUB_OUTPUT
         echo "hour=$(/bin/date -u "+%H")" >> $GITHUB_OUTPUT
+
+    - name: Install Theos dependencies
+      id: install-deps
+      if: inputs.advanced == 'true'
+      shell: bash
+      run: |
+        brew list xz >/dev/null 2>&1 || brew install xz
+        brew list make >/dev/null 2>&1 || brew install make
+        brew list ldid >/dev/null 2>&1 || brew install ldid
+        echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
 
     - name: Setup Theos cache
       id: theos-cache-advanced
