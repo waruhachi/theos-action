@@ -6,6 +6,10 @@ branding:
   color: purple
 
 inputs:
+  advanced:
+    description: 'Enable advanced options'
+    required: false
+    default: false
   theos-dir:
     description: 'Directory to install Theos to'
     required: false
@@ -50,8 +54,10 @@ inputs:
 runs:
   using: "composite"
   steps:
+    # Non advanced setup
     - name: Get Current Hour
       id: get-hour
+      if: inputs.advanced == 'false'
       run: |
         echo "hour=$(/bin/date -u "+%H")" >> $GITHUB_OUTPUT
       shell: bash
@@ -59,28 +65,22 @@ runs:
     - name: Setup Theos cache
       id: theos-cache
       uses: actions/cache@v4
-      if: inputs.theos-cache == 'true'
+      if: inputs.advanced == 'false' && inputs.theos-cache == 'true'
       with:
         path: ${{ inputs.theos-dir }}
         key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.get-hour.outputs.hour }}
 
-    - name: Setup Theos SDKs cache
-      id: theosSDK-cache
-      uses: actions/cache@v4
-      if: inputs.theosSDK-cache == 'true'
-      with:
-        path: ${{ inputs.theosSDK-cache-dir }}
-        key: ${{ inputs.theosSDK-src }}-${{ inputs.theosSDK-branch }}-${{ steps.get-hour.outputs.hour }}
-
     - name: Install Theos
-      if: inputs.theos-cache != 'true' || steps.theos-cache.outputs.cache-hit != 'true'
+      if: inputs.advanced == 'false' && inputs.theos-cache == 'false' || steps.theos-cache.outputs.cache-hit == 'false'
       shell: bash
       run: |
         bash -c "$(curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos)" || { echo "Failed to install Theos"; exit 1; }
-
-    - name: Install Theos SDKs
-      if: inputs.theosSDK-cache != 'true' || steps.theosSDK-cache.outputs.cache-hit != 'true'
+    
+    - name: Update Theos
+      if: inputs.advanced == 'false' && (inputs.theos-cache == 'false' || steps.theos-cache.outputs.cache-hit == 'false')
       shell: bash
       run: |
-        rm -rf ${{ inputs.theos-dir }}/sdks/* 
-        curl -sL https://github.com/${{ inputs.theosSDK-src }}/archive/${{ inputs.theosSDK-branch }}.tar.gz | tar -xzf - --strip-components=1 -C ${{ inputs.theos-dir }}/sdks
+        $THEOS/bin/update-theos
+
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
