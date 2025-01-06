@@ -9,11 +9,11 @@ inputs:
   advanced:
     description: 'Enable advanced options'
     required: false
-    default: false
+    default: 'false'
   theos-dir:
     description: 'Directory to install Theos to'
     required: false
-    default: '${{ github.workspace }}/theos'
+    default: '~/theos'
   theos-src:
     description: 'What repo to clone Theos from'
     required: false
@@ -25,15 +25,15 @@ inputs:
   theos-cache:
     description: 'Cache Theos'
     required: false
-    default: true
+    default: 'true'
   theos-cache-dir:
     description: 'Directory to cache Theos to'
     required: false
-    default: '${{ github.workspace }}/cache/theos'
+    default: '~/cache/theos'
   theosSDK-dir:
     description: 'Directory to install iOS SKs to'
     required: false
-    default: '${{ github.workspace }}/theos/sdks'
+    default: '~/theos/sdks'
   theosSDK-src:
     description: 'What repo to clone iOS SKs from'
     required: false
@@ -45,11 +45,11 @@ inputs:
   theosSDK-cache:
     description: 'Cache iOS SDKs'
     required: false
-    default: true
+    default: 'true'
   theosSDK-cache-dir:
     description: 'Directory to cache iOS SDKs to'
     required: false
-    default: '${{ github.workspace }}/cache/theosSDK'
+    default: '~/cache/theosSDK'
 
 runs:
   using: "composite"
@@ -57,7 +57,7 @@ runs:
     # Simple Setup 
     - name: Get Current Hour
       id: get-hour
-      if: inputs.advanced == 'false'
+      if: inputs.advanced != 'true'
       run: |
         echo "hour=$(/bin/date -u "+%H")" >> $GITHUB_OUTPUT
       shell: bash
@@ -65,19 +65,19 @@ runs:
     - name: Setup Theos cache
       id: theos-cache-simple
       uses: actions/cache@v4
-      if: inputs.advanced == 'false' && inputs.theos-cache == 'true'
+      if: inputs.advanced != 'true' && inputs.theos-cache == 'true'
       with:
         path: ${{ inputs.theos-dir }}
         key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.get-hour.outputs.hour }}
 
     - name: Install Theos
-      if: inputs.advanced == 'false' && (inputs.theos-cache != 'true' || steps.theos-cache-simple.outputs.cache-hit != 'true')
+      if: inputs.advanced != 'true' && (inputs.theos-cache != 'true' || steps.theos-cache-simple.outputs.cache-hit != 'true')
       shell: bash
       run: |
         bash -c "$(curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos)" || { echo "Failed to install Theos"; exit 1; }
     
     - name: Update Theos
-      if: inputs.advanced == 'false' && (inputs.theos-cache != 'true' || steps.theos-cache-simple.outputs.cache-hit != 'true')
+      if: inputs.advanced != 'true' && (inputs.theos-cache != 'true' || steps.theos-cache-simple.outputs.cache-hit != 'true')
       shell: bash
       run: |
         source ~/.bashrc && $THEOS/bin/update-theos
