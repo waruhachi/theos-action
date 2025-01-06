@@ -42,7 +42,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Theos
-        uses: waruhachi/theos-action@v1.0.0
+        uses: waruhachi/theos-action@v2.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
