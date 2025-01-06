@@ -50,10 +50,12 @@ runs:
         echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
         bash -c "$(curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos)"
         echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
+        source ~/.bashrc
 
     - name: Update Theos
       if: inputs.theos-cache == 'true' && steps.theos-cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
         echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
-        $THEOS/bin/update-theos
+        source ~/.bashrc
+        ${{ inputs.theos-dir }}/bin/update-theos
