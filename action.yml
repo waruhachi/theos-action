@@ -6,10 +6,6 @@ branding:
   color: purple
 
 inputs:
-  advanced:
-    description: 'Enable advanced options'
-    required: false
-    default: 'false'
   theos-dir:
     description: 'Directory to install Theos to'
     required: false
@@ -26,45 +22,17 @@ inputs:
     description: 'Cache Theos'
     required: false
     default: 'true'
-  theos-cache-dir:
-    description: 'Directory to cache Theos to'
-    required: false
-    default: '~/cache/theos'
-  theosSDK-dir:
-    description: 'Directory to install iOS SKs to'
-    required: false
-    default: '~/theos/sdks'
-  theosSDK-src:
-    description: 'What repo to clone iOS SKs from'
-    required: false
-    default: 'theos/sdks'
-  theosSDK-branch:
-    description: 'What branch to clone iOS SKs from'
-    required: false
-    default: 'master'
-  theosSDK-cache:
-    description: 'Cache iOS SDKs'
-    required: false
-    default: 'true'
-  theosSDK-cache-dir:
-    description: 'Directory to cache iOS SDKs to'
-    required: false
-    default: '~/cache/theosSDK'
 
 runs:
   using: "composite"
   steps:
-    # Simple Setup 
     - name: Get Current Hour
-      id: cache-simple
-      if: inputs.advanced != 'true'
+      id: cache-key
       shell: bash
       run: |
         echo "hour=$(/bin/date -u "+%H")" >> $GITHUB_OUTPUT
 
     - name: Install Theos dependencies
-      id: install-dependencies-simple
-      if: inputs.advanced == 'true'
       shell: bash
       run: |
         brew list xz >/dev/null 2>&1 || brew install xz
@@ -72,89 +40,23 @@ runs:
         brew list ldid >/dev/null 2>&1 || brew install ldid
         echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
 
-    - name: Setup Theos cache
-      id: theos-cache-simple
+    - name: Theos Cache
+      id: theos-cache
       uses: actions/cache@v4
-      if: inputs.advanced != 'true' && (inputs.theos-cache == 'true')
+      if: inputs.theos-cache == 'true'
       with:
         path: ${{ inputs.theos-dir }}
-        key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.cache-simple.outputs.hour }}
+        key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.cache-key.outputs.hour }}
 
     - name: Install Theos
-      if: inputs.advanced != 'true' && (inputs.theos-cache != 'true' || steps.theos-cache-simple.outputs.cache-hit != 'true')
+      if: inputs.theos-cache != 'true' || steps.theos-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        bash -c "$(curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos)" || { echo "Failed to install Theos"; exit 1; }
-    
-    - name: Update Theos
-      if: inputs.advanced != 'true' && (inputs.theos-cache != 'true' || steps.theos-cache-simple.outputs.cache-hit != 'true')
-      shell: bash
-      run: |
-        source ~/.bashrc && $THEOS/bin/update-theos
-
-    - name: Export THEOS Environment Variable
-      shell: bash
-      run: |
+        bash -c "$(curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos)"
         echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
     
-    # Advanced Setup
-    - name: Get Current Day and Hour
-      id: cache-advanced
-      if: inputs.advanced == 'true'
-      shell: bash
-      run: |
-        echo "day=$(date -u +%Y-%m-%d)" >> $GITHUB_OUTPUT
-        echo "hour=$(/bin/date -u "+%H")" >> $GITHUB_OUTPUT
-
-    - name: Install Theos dependencies
-      id: install-dependencies-advanced
-      if: inputs.advanced == 'true'
-      shell: bash
-      run: |
-        brew list xz >/dev/null 2>&1 || brew install xz
-        brew list make >/dev/null 2>&1 || brew install make
-        brew list ldid >/dev/null 2>&1 || brew install ldid
-        echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
-
-    - name: Setup Theos cache
-      id: theos-cache-advanced
-      uses: actions/cache@v4
-      if: inputs.advanced == 'true' && (inputs.theos-cache == 'true')
-      with:
-        path: ${{ inputs.theos-dir }}
-        key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.cache-advanced.outputs.hour }}
-
-    - name: Setup Theos SDKs cache
-      id: theosSDK-cache-advanced
-      uses: actions/cache@v4
-      if: inputs.advanced == 'true' && (inputs.theosSDK-cache == 'true')
-      with:
-        path: ${{ inputs.theosSDK-cache-dir }}
-        key: ${{ inputs.theosSDK-src }}-${{ inputs.theosSDK-branch }}-${{ steps.cache-advanced.outputs.day }}
-
-    - name: Install Theos
-      if: inputs.advanced == 'true' && (inputs.theos-cache != 'true' || steps.theos-cache-advanced.outputs.cache-hit != 'true')
-      shell: bash
-      run: |
-        rm -rf ${{ inputs.theos-dir }}
-        git clone ${{ inputs.theos-src }} ${{ inputs.theos-dir }} --recursive
-        cd ${{ inputs.theos-dir }}
-        git -C ${{ inputs.theos-dir }} checkout ${{ inputs.theos-ref }}
-
-    - name: Install Theos SDKs
-      if: inputs.advanced == 'true' && (inputs.theosSDK-cache != 'true' || steps.theosSDK-cache-advanced.outputs.cache-hit != 'true')
-      shell: bash
-      run: |
-        rm -rf ${{ inputs.theos-dir }}/sdks/* 
-        curl -sL https://github.com/${{ inputs.theosSDK-src }}/archive/${{ inputs.theosSDK-branch }}.tar.gz | tar -xzf - --strip-components=1 -C ${{ inputs.theos-dir }}/sdks
-
     - name: Update Theos
-      if: inputs.advanced == 'true' && (inputs.theos-cache != 'true' || steps.theos-cache-advanced.outputs.cache-hit != 'true')
+      if: inputs.theos-cache == 'true' && steps.theos-cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
-        source ~/.bashrc && $THEOS/bin/update-theos
-    
-    - name: Export THEOS Environment Variable
-      shell: bash
-      run: |
-        echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
+        $THEOS/bin/update-theos
