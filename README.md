@@ -2,30 +2,98 @@
 
 Use Theos in your GitHub Actions to build iOS tweaks, even without a Mac.
 
-## Usage
-Only macOS runners are supported as of right now
+### Usage
+Currently, **only macOS runners** are supported.
+
+### Configuration
+The following inputs are available (all are optional):
 
 ```yaml
 - uses: waruhachi/theos-action@v1.0.0
   with:
-      # Directory to install Theos to
-      theos-dir: '${{ github.workspace }}/theos'
-      # What repo to clone Theos from
+      advanced: 'false'
+      theos-dir: '~/theos'
       theos-src: 'theos/theos'
-      # What branch to clone Theos from
       theos-branch: 'master'
-      # Cache Theos
       theos-cache: true
-      # Directory to cache Theos to
-      theos-cache-dir: '${{ github.workspace }}/cache/theos'
-      # Directory to install iOS SKs to
-      theosSDK-dir: '${{ github.workspace }}/theos/sdks'
-      # What repo to clone iOS SKs from
+      theos-cache-dir: '~/cache/theos'
+      theosSDK-dir: '~/theos/sdks'
       theosSDK-src: 'theos/sdks'
-      # What branch to clone iOS SKs from
       theosSDK-branch: 'master'
-      # Cache iOS SDKs
       theosSDK-cache: true
-      # Directory to cache iOS SDKs to
-      theosSDK-cache-dir: '${{ github.workspace }}/cache/theosSDK'
+      theosSDK-cache-dir: '~/cache/theosSDK'
+```
+
+- **`advanced`**: Enables all the below options.
+- **`theos-dir`**: Directory to install Theos to.
+- **`theos-src`**: Repository to clone Theos from.
+- **`theos-branch`**: Branch to clone Theos from.
+- **`theos-cache`**: Whether to cache Theos.
+- **`theos-cache-dir`**: Directory to cache Theos.
+- **`theosSDK-dir`**: Directory to install iOS SDKs to.
+- **`theosSDK-src`**: Repository to clone iOS SDKs from.
+- **`theosSDK-branch`**: Branch to clone iOS SDKs from.
+- **`theosSDK-cache`**: Whether to cache iOS SDKs.
+- **`theosSDK-cache-dir`**: Directory to cache iOS SDKs.
+
+---
+
+### Simple Example Workflow
+
+```yaml
+name: Build with Theos (Simple)
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Theos
+        uses: waruhachi/theos-action@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build tweak
+        run: |
+          make clean package FINALPACKAGE=1
+          make clean package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless
+```
+
+### Advanced Example Workflow
+
+```yaml
+name: Build with Theos (Advanced)
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Theos
+        uses: waruhachi/theos-action@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          advanced: 'true'
+          theos-src: 'roothide/theos'
+          theos-cache: true
+          theosSDK-cache: true
+
+      - name: Build tweak
+        run: |
+          make clean package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=roothide
 ```
