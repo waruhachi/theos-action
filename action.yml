@@ -90,14 +90,12 @@ runs:
       if: inputs.advanced != 'true' && (inputs.theos-cache != 'true' || steps.theos-cache-simple.outputs.cache-hit != 'true')
       shell: bash
       run: |
-        source ~/.bashrc && $THEOS/bin/update-theos
+        source ~/.bashrc && source ~/.zshrc && $THEOS/bin/update-theos
 
-    - name: Debug Theos
-      if : inputs.advanced != 'true'
+    - name: Export THEOS Environment Variable
       shell: bash
       run: |
-        echo $THEOS
-        ls -la ${{ inputs.theos-dir }}
+        echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
     
     # Advanced Setup
     - name: Get Current Day and Hour
@@ -149,3 +147,14 @@ runs:
       run: |
         rm -rf ${{ inputs.theos-dir }}/sdks/* 
         curl -sL https://github.com/${{ inputs.theosSDK-src }}/archive/${{ inputs.theosSDK-branch }}.tar.gz | tar -xzf - --strip-components=1 -C ${{ inputs.theos-dir }}/sdks
+
+    - name: Update Theos
+      if: inputs.advanced == 'true' && (inputs.theos-cache != 'true' || steps.theos-cache-advanced.outputs.cache-hit != 'true')
+      shell: bash
+      run: |
+        source ~/.bashrc && source ~/.zshrc && $THEOS/bin/update-theos
+    
+    - name: Export THEOS Environment Variable
+      shell: bash
+      run: |
+        echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
