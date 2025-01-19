@@ -44,19 +44,14 @@ runs:
       if: inputs.theos-cache != 'true' || steps.theos-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        brew list xz >/dev/null 2>&1 || brew install xz
-        brew list make >/dev/null 2>&1 || brew install make
-        brew list ldid >/dev/null 2>&1 || brew install ldid
+        brew install xz make ldid --quiet || true
         echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
         bash -c "$(curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos)"
         echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
-        source ~/.bashrc
 
     - name: Update Theos
       if: inputs.theos-cache == 'true' && steps.theos-cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
         echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
-        echo "export THEOS" >> ~/.bashrc
-        source ~/.bashrc
-        $THEOS/bin/update-theos
+        ${{ inputs.theos-dir }}/bin/update-theos
