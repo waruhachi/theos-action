@@ -56,4 +56,5 @@ runs:
       shell: bash
       run: |
         echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
-        ${{ inputs.theos-dir }}/bin/update-theos
+        export THEOS=${{ inputs.theos-dir }}
+        $THEOS/bin/update-theos
