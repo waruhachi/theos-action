@@ -22,6 +22,10 @@ inputs:
     description: "Cache Theos"
     required: false
     default: "true"
+  libgcuniversal:
+    description: "Install LibGcUniversal"
+    required: false
+    default: "true"
 
 runs:
   using: "composite"
@@ -63,3 +67,11 @@ runs:
         echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
         export THEOS=${{ inputs.theos-dir }}
         $THEOS/bin/update-theos
+
+    - name: Install LibGcUniversal
+      if: inputs.libgcuniversal == 'true'
+      shell: bash
+      run: |
+        git clone https://github.com/MrGcGamer/LibGcUniversalDocumentation.git
+        cd LibGcUniversalDocumentation
+        ./install.sh
