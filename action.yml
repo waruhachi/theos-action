@@ -58,13 +58,11 @@ runs:
       shell: bash
       run: |
         bash -c "$(curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos)"
-        echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
 
     - name: Update Theos
       if: inputs.theos-cache == 'true' && steps.theos-cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
-        echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
         export THEOS=${{ inputs.theos-dir }}
         $THEOS/bin/update-theos
 
@@ -72,6 +70,7 @@ runs:
       if: inputs.libgcuniversal == 'true'
       shell: bash
       run: |
+        export THEOS=${{ inputs.theos-dir }}
         git clone https://github.com/MrGcGamer/LibGcUniversalDocumentation.git
         cd LibGcUniversalDocumentation
         ./install.sh
