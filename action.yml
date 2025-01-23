@@ -26,6 +26,10 @@ inputs:
     description: "Install LibGcUniversal"
     required: false
     default: "true"
+  libgcuniversal-src:
+    description: "What repo to clone LibGcUniversal from"
+    required: false
+    default: "MrGcGamer/LibGcUniversalDocumentation"
 
 runs:
   using: "composite"
@@ -71,6 +75,6 @@ runs:
       shell: bash
       run: |
         export THEOS=${{ inputs.theos-dir }}
-        git clone https://github.com/MrGcGamer/LibGcUniversalDocumentation.git
-        cd LibGcUniversalDocumentation
+        git clone https://github.com/${{ inputs.libgcuniversal-src }}.git
+        cd $(basename "${{ inputs.libgcuniversal-src }}")
         ./install.sh
