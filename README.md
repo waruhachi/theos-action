@@ -11,7 +11,7 @@ Currently, **only macOS runners** are supported.
 The following inputs are available (all are optional):
 
 ```yaml
-- uses: waruhachi/theos-action@v2.2.4
+- uses: waruhachi/theos-action@v2.2.5
   with:
       theos-dir: '~/theos'
       theos-src: 'theos/theos'
@@ -62,6 +62,7 @@ jobs:
                   libgcuniversal: true
                   libgcuniversal-src: 'waruhachi/LibGcUniversal'
                   altlist: true
+                  altlist-src: 'waruhachi/AltList'
 
             - name: Build tweak
               run: |
