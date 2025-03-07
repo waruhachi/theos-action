@@ -22,6 +22,14 @@ inputs:
     description: "Cache Theos"
     required: false
     default: "true"
+  sdks:
+    description: "Install a custom SDK"
+    required: false
+    default: "false"
+  sdks-src:
+    description: "What repo to clone the custom SDK from"
+    required: false
+    default: "theos/sdks"
   libgcuniversal:
     description: "Install LibGcUniversal"
     required: false
@@ -69,7 +77,7 @@ runs:
       if: inputs.theos-cache != 'true' || steps.theos-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        bash -c "$(curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos)"
+        [[ "${{ inputs.sdks }}" == "true" ]] && export SDK_FETCH_URL="https://api.github.com/repos/${{ inputs.sdks-src }}/releases/latest"; bash -c "$(curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos)"
 
     - name: Update Theos
       if: inputs.theos-cache == 'true' && steps.theos-cache.outputs.cache-hit == 'true'

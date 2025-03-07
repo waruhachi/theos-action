@@ -11,11 +11,13 @@ Currently, **only macOS runners** are supported.
 The following inputs are available (all are optional):
 
 ```yaml
-- uses: waruhachi/theos-action@v2.2.5
+- uses: waruhachi/theos-action@v2.2.6
   with:
       theos-dir: '~/theos'
       theos-src: 'theos/theos'
       theos-branch: 'master'
+      sdks: true
+      sdks-src: 'theos/sdks'
       theos-cache: true
       libgcuniversal: true
       libgcuniversal-src: 'MrGcGamer/LibGcUniversalDocumentation'
@@ -27,6 +29,8 @@ The following inputs are available (all are optional):
 -   **`theos-src`**: Repository to clone Theos from.
 -   **`theos-branch`**: Branch to clone Theos from.
 -   **`theos-cache`**: Whether to cache Theos.
+-   **`sdks`**: Whether to install custom SDKs.
+-   **`sdks-src`**: Repository to clone custom SDKs from.
 -   **`libgcuniversal`**: Whether to install LibGcUniversal.
 -   **`libgcuniversal-src`**: Repository to clone LibGcUniversal from.
 -   **`altlist`**: Whether to install AltList.
@@ -59,6 +63,8 @@ jobs:
                   theos-src: 'roothide/theos'
                   theos-branch: 'master'
                   theos-cache: true
+                  sdks: true
+                  sdks-src: 'waruhachi/sdks'
                   libgcuniversal: true
                   libgcuniversal-src: 'waruhachi/LibGcUniversal'
                   altlist: true
