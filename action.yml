@@ -73,11 +73,31 @@ runs:
         path: ${{ inputs.theos-dir }}
         key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.cache-key.outputs.hour }}
 
-    - name: Install Theos
+    - name: Setup Theos
       if: inputs.theos-cache != 'true' || steps.theos-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        [[ "${{ inputs.sdks }}" == "true" ]] && export SDK_FETCH_URL="https://api.github.com/repos/${{ inputs.sdks-src }}/releases/latest"; bash -c "$(curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos)"
+        set -e
+        if [[ "${{ inputs.sdks }}" == "true" ]]; then
+          export SDK_FETCH_URL="https://api.github.com/repos/${{ inputs.sdks-src }}/releases/latest"
+        fi
+        bash -c "$(curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos)"
+
+        export THEOS=${{ inputs.theos-dir }}
+
+        if [[ "${{ inputs.libgcuniversal }}" == "true" ]]; then
+          git clone https://github.com/${{ inputs.libgcuniversal-src }}.git
+          cd $(basename "${{ inputs.libgcuniversal-src }}")
+          ./install.sh
+          cd ..
+        fi
+
+        if [[ "${{ inputs.altlist }}" == "true" ]]; then
+          git clone https://github.com/${{ inputs.altlist-src }}.git
+          cd $(basename "${{ inputs.altlist-src }}")
+          ./install_to_theos.sh
+          cd ..
+        fi
 
     - name: Update Theos
       if: inputs.theos-cache == 'true' && steps.theos-cache.outputs.cache-hit == 'true'
@@ -85,21 +105,3 @@ runs:
       run: |
         export THEOS=${{ inputs.theos-dir }}
         $THEOS/bin/update-theos
-
-    - name: Install LibGcUniversal
-      if: inputs.libgcuniversal == 'true'
-      shell: bash
-      run: |
-        export THEOS=${{ inputs.theos-dir }}
-        git clone https://github.com/${{ inputs.libgcuniversal-src }}.git
-        cd $(basename "${{ inputs.libgcuniversal-src }}")
-        ./install.sh
-
-    - name: Install AltList
-      if: inputs.altlist == 'true'
-      shell: bash
-      run: |
-        export THEOS=${{ inputs.theos-dir }}
-        git clone https://github.com/${{ inputs.altlist-src }}.git
-        cd $(basename "${{ inputs.altlist-src }}")
-        ./install_to_theos.sh
