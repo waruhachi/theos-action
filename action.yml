@@ -54,7 +54,8 @@ runs:
       id: cache-key
       shell: bash
       run: |
-        echo "theos-cache-key=$(/bin/date -u "+%Y%m%d%H")" >> $GITHUB_OUTPUT
+        latest-commit=$(gh api -H 'Accept: application/vnd.github.sha' \
+            /repos/${{ inputs.theos-src }}/commits/${{ inputs.theos-branch }}); echo "latest-commit=$latest-commit" >> $GITHUB_OUTPUT
 
     - name: Install dependencies
       shell: bash
@@ -62,6 +63,7 @@ runs:
         brew list xz >/dev/null 2>&1 || brew install xz
         brew list make >/dev/null 2>&1 || brew install make
         brew list ldid >/dev/null 2>&1 || brew install ldid
+
         echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
         echo PATH=\"$(brew --prefix make)/libexec/gnubin:\$PATH\" >> ~/.bash_profile
 
@@ -71,7 +73,7 @@ runs:
       if: inputs.theos-cache == 'true'
       with:
         path: ${{ inputs.theos-dir }}
-        key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.cache-key.outputs.theos-cache-key }}
+        key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.cache-key.outputs.latest-commit }}
 
     - name: Setup Theos
       if: inputs.theos-cache != 'true' || steps.theos-cache.outputs.cache-hit != 'true'

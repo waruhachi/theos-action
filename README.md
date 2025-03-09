@@ -11,7 +11,7 @@ Currently, **only macOS runners** are supported.
 The following inputs are available (all are optional):
 
 ```yaml
-- uses: waruhachi/theos-action@v2.3.0
+- uses: waruhachi/theos-action@v2.3.1
   with:
       theos-dir: '~/theos'
       theos-src: 'theos/theos'
@@ -56,12 +56,12 @@ jobs:
               uses: actions/checkout@v4
 
             - name: Setup Theos
-              uses: waruhachi/theos-action@v2.3.0
+              uses: waruhachi/theos-action@v2.3.1
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                  theos-src: 'roothide/theos'
-                  theos-branch: 'master'
+                  theos-src: 'waruhachi/theos'
+                  theos-branch: 'main'
                   theos-cache: true
                   sdks: true
                   sdks-src: 'waruhachi/sdks'
