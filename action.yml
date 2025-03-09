@@ -50,11 +50,11 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Get Current Hour
+    - name: Generate Cache Key
       id: cache-key
       shell: bash
       run: |
-        echo "hour=$(/bin/date -u "+%H")" >> $GITHUB_OUTPUT
+        echo "theos-cache-key=$(/bin/date -u "+%Y%m%d%H")" >> $GITHUB_OUTPUT
 
     - name: Install dependencies
       shell: bash
@@ -71,7 +71,7 @@ runs:
       if: inputs.theos-cache == 'true'
       with:
         path: ${{ inputs.theos-dir }}
-        key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.cache-key.outputs.hour }}
+        key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.cache-key.outputs.theos-cache-key }}
 
     - name: Setup Theos
       if: inputs.theos-cache != 'true' || steps.theos-cache.outputs.cache-hit != 'true'
