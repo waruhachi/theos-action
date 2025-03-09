@@ -84,7 +84,7 @@ runs:
 
         if [[ "${{ inputs.sdks }}" == "true" ]]; then
           sed -i.bak "s|SDK_FETCH_URL=.*|SDK_FETCH_URL=\"https://api.github.com/repos/${{ inputs.sdks-src }}/releases/latest\"|" "$THEOS/bin/install-sdk"
-          "$THEOS/bin/install-sdk" latest
+          for sdk in $("$THEOS/bin/install-sdk" 2>&1 | awk -F': ' '/Available/ {print $2}' | xargs -n1 | grep -vE "latest(-tv)?$" | xargs); do "$THEOS/bin/install-sdk" "$sdk"; done
         fi
 
         if [[ "${{ inputs.libgcuniversal }}" == "true" ]]; then
