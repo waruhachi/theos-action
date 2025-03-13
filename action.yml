@@ -79,13 +79,21 @@ runs:
       if: inputs.theos-cache != 'true' || steps.theos-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        set -e
         bash -c "$(curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos)"
 
         export THEOS=${{ inputs.theos-dir }}
 
         if [[ "${{ inputs.sdks }}" == "true" ]]; then
           sed -i.bak "s|SDK_FETCH_URL=.*|SDK_FETCH_URL=\"https://api.github.com/repos/${{ inputs.sdks-src }}/releases/latest\"|" "$THEOS/bin/install-sdk"
+
+          sdk_list=$("$THEOS/bin/install-sdk" 2>&1 | awk -F': ' '/Available/ {print $2}' | xargs -n1 | grep -vE "latest(-tv)?$")
+          for sdk in $(
+            (echo "$sdk_list" | grep '^AppleTVOS' | sort -V | tail -r | tail -n +2 | tail -r;
+            echo "$sdk_list" | grep '^iPhoneOS'  | sort -V | tail -r | tail -n +2 | tail -r) | xargs
+          ); do
+            "$THEOS/bin/install-sdk" "$sdk"
+          done
+
           for sdk in $("$THEOS/bin/install-sdk" 2>&1 | awk -F': ' '/Available/ {print $2}' | xargs -n1 | grep -vE "latest(-tv)?$" | xargs); do "$THEOS/bin/install-sdk" "$sdk"; done
         fi
 
