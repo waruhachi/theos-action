@@ -120,9 +120,11 @@ runs:
         repository: ${{ inputs.libgcuniversal-src }}
         ref: ${{ inputs.libgcuniversal-branch }}
         path: ${{ github.workspace }}/libgcuniversal
+      env:
+        THEOS: ${{ inputs.theos-dir }}
       shell: bash
       run: |
-        export THEOS=${{ inputs.theos-dir }}
+        # export THEOS=${{ inputs.theos-dir }}
         cd ${{ github.workspace }}/libgcuniversal
         ./install.sh
 
@@ -133,15 +135,19 @@ runs:
         repository: ${{ inputs.altlist-src }}
         ref: ${{ inputs.altlist-branch }}
         path: ${{ github.workspace }}/altlist
+      env:
+        THEOS: ${{ inputs.theos-dir }}
       shell: bash
       run: |
-        export THEOS=${{ inputs.theos-dir }}
+        # export THEOS=${{ inputs.theos-dir }}
         cd ${{ github.workspace }}/altlist
         ./install_to_theos.sh
 
     - name: Update Theos
       if: steps.theos-cache.outputs.cache-hit == 'true'
+      env:
+        THEOS: ${{ inputs.theos-dir }}
       shell: bash
       run: |
-        export THEOS=${{ inputs.theos-dir }}
+        # export THEOS=${{ inputs.theos-dir }}
         $THEOS/bin/update-theos
