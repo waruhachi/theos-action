@@ -58,9 +58,9 @@ runs:
   steps:
     - name: Generate Cache Key
       id: cache-key
-      shell: bash
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      shell: bash
       run: |
         set -euo pipefail
 

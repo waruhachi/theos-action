@@ -11,17 +11,17 @@ Currently, **only macOS runners** are supported.
 The following inputs are available (all are optional) with their default values:
 
 ```yaml
-- uses: waruhachi/theos-action@v2.3.3
+- uses: waruhachi/theos-action@v2.3.4
   with:
       theos-src: 'theos/theos'
       theos-branch: 'master'
       theos-dir: '~/theos'
       sdks-src: 'theos/sdks'
       sdks-branch: 'master'
-      libgcuniversal: 'true'
+      libgcuniversal: true
       libgcuniversal-src: 'MrGcGamer/LibGcUniversalDocumentation'
       libgcuniversal-branch: 'master'
-      altlist: 'true'
+      altlist: true
       altlist-src: 'opa334/AltList'
       altlist-branch: 'main'
 ```
