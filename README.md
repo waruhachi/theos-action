@@ -11,7 +11,7 @@ Currently, **only macOS runners** are supported.
 The following inputs are available (all are optional) with their default values:
 
 ```yaml
-- uses: waruhachi/theos-action@v2.3.4
+- uses: waruhachi/theos-action@v2.3.5
   with:
       theos-src: 'theos/theos'
       theos-branch: 'master'

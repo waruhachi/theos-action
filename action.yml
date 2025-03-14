@@ -53,8 +53,6 @@ inputs:
 
 runs:
   using: "composite"
-  env:
-    THEOS: ${{ inputs.theos-dir }}
   steps:
     - name: Generate Cache Key
       id: cache-key
@@ -124,7 +122,7 @@ runs:
         path: ${{ github.workspace }}/libgcuniversal
       shell: bash
       run: |
-        # export THEOS=${{ inputs.theos-dir }}
+        export THEOS=${{ inputs.theos-dir }}
         cd ${{ github.workspace }}/libgcuniversal
         ./install.sh
 
@@ -137,7 +135,7 @@ runs:
         path: ${{ github.workspace }}/altlist
       shell: bash
       run: |
-        # export THEOS=${{ inputs.theos-dir }}
+        export THEOS=${{ inputs.theos-dir }}
         cd ${{ github.workspace }}/altlist
         ./install_to_theos.sh
 
@@ -145,5 +143,5 @@ runs:
       if: steps.theos-cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
-        # export THEOS=${{ inputs.theos-dir }}
+        export THEOS=${{ inputs.theos-dir }}
         $THEOS/bin/update-theos
