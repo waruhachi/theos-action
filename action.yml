@@ -6,10 +6,6 @@ branding:
   color: purple
 
 inputs:
-  theos-dir:
-    description: "Directory to install Theos to"
-    required: false
-    default: "~/theos"
   theos-src:
     description: "What repo to clone Theos from"
     required: false
@@ -18,102 +14,136 @@ inputs:
     description: "What branch to clone Theos from"
     required: false
     default: "master"
-  theos-cache:
-    description: "Cache Theos"
+  theos-dir:
+    description: "Where to install Theos"
     required: false
-    default: "true"
-  sdks:
-    description: "Install a custom SDK"
-    required: false
-    default: "false"
+    default: "~/theos"
   sdks-src:
-    description: "What repo to clone the custom SDK from"
+    description: "What repo to clone the patched SDK from"
     required: false
     default: "theos/sdks"
+  sdks-branch:
+    description: "What branch to clone the patched SDK from"
+    required: false
+    default: "master"
   libgcuniversal:
-    description: "Install LibGcUniversal"
+    description: "Whether to install LibGcUniversal"
     required: false
     default: "false"
   libgcuniversal-src:
     description: "What repo to clone LibGcUniversal from"
     required: false
     default: "MrGcGamer/LibGcUniversalDocumentation"
+  libgcuniversal-branch:
+    description: "What branch to clone LibGcUniversal from"
+    required: false
+    default: "master"
   altlist:
-    description: "Install AltList"
+    description: "Whether to install AltList"
     required: false
     default: "false"
   altlist-src:
     description: "What repo to clone AltList from"
     required: false
     default: "opa334/AltList"
+  altlist-branch:
+    description: "What branch to clone AltList from"
+    required: false
+    default: "main"
 
 runs:
   using: "composite"
+  env:
+    THEOS: ${{ inputs.theos-dir }}
   steps:
     - name: Generate Cache Key
       id: cache-key
       shell: bash
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        latest-commit=$(gh api -H 'Accept: application/vnd.github.sha' \
-            /repos/${{ inputs.theos-src }}/commits/${{ inputs.theos-branch }}); echo "latest-commit=$latest-commit" >> $GITHUB_OUTPUT
+        set -euo pipefail
+
+        theos_sha=$(gh api -H 'Accept: application/vnd.github.sha' /repos/${{ inputs.theos-src }}/commits/${{ inputs.theos-branch }})
+        sdks_sha=$(gh api -H 'Accept: application/vnd.github.sha' /repos/${{ inputs.sdks-src }}/commits/${{ inputs.sdks-branch }})
+
+        if [[ "${{ inputs.libgcuniversal }}" == 'true' ]]; then
+          libgc_sha=$(gh api -H 'Accept: application/vnd.github.sha' /repos/${{ inputs.libgcuniversal-src }}/commits/${{ inputs.libgcuniversal-branch }})
+        else
+          libgc_sha="none"
+        fi
+
+        if [[ "${{ inputs.altlist }}" == 'true' ]]; then
+          altlist_sha=$(gh api -H 'Accept: application/vnd.github.sha' /repos/${{ inputs.altlist-src }}/commits/${{ inputs.altlist-branch }})
+        else
+          altlist_sha="none"
+        fi
+
+        echo "key=${{ inputs.theos-src }}-${{ inputs.theos-branch }}-$theos_sha|${{ inputs.sdks-src }}-${{ inputs.sdks-branch }}-$sdks_sha|${{ inputs.libgcuniversal-src }}-${{ inputs.libgcuniversal-branch }}-$libgc_sha|${{ inputs.altlist-src }}-${{ inputs.altlist-branch }}-$altlist_sha" >> $GITHUB_OUTPUT
 
     - name: Install dependencies
       shell: bash
       run: |
-        brew list xz >/dev/null 2>&1 || brew install xz
-        brew list make >/dev/null 2>&1 || brew install make
-        brew list ldid >/dev/null 2>&1 || brew install ldid
+        set -euo pipefail
 
+        brew install xz make ldid
         echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
-        echo PATH=\"$(brew --prefix make)/libexec/gnubin:\$PATH\" >> ~/.bash_profile
+        # echo PATH=\"$(brew --prefix make)/libexec/gnubin:\$PATH\" >> ~/.bash_profile
 
     - name: Theos Cache
       id: theos-cache
       uses: actions/cache@v4
-      if: inputs.theos-cache == 'true'
       with:
         path: ${{ inputs.theos-dir }}
-        key: ${{ inputs.theos-src }}-${{ inputs.theos-branch }}-${{ steps.cache-key.outputs.latest-commit }}
+        key: ${{ steps.cache-key.outputs.key }}
 
     - name: Setup Theos
-      if: inputs.theos-cache != 'true' || steps.theos-cache.outputs.cache-hit != 'true'
+      if: steps.theos-cache.outputs.cache-hit != 'true'
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.theos-src }}
+        ref: ${{ inputs.theos-branch }}
+        submodules: recursive
+        path: ${{ inputs.theos-dir }}
+
+    - name: Setup SDKs
+      if: steps.theos-cache.outputs.cache-hit != 'true'
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.sdks-src }}
+        ref: ${{ inputs.sdks-branch }}
+        submodules: recursive
+        path: ${{ inputs.theos-dir }}/sdks
+
+    - name: Setup LibGcUniversal
+      if: inputs.libgcuniversal == 'true'
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.libgcuniversal-src }}
+        ref: ${{ inputs.libgcuniversal-branch }}
+        path: ${{ github.workspace }}/libgcuniversal
       shell: bash
       run: |
-        bash -c "$(curl -fsSL https://raw.githubusercontent.com/${{ inputs.theos-src }}/${{ inputs.theos-branch }}/bin/install-theos)"
+        # export THEOS=${{ inputs.theos-dir }}
+        cd ${{ github.workspace }}/libgcuniversal
+        ./install.sh
 
-        export THEOS=${{ inputs.theos-dir }}
-
-        if [[ "${{ inputs.sdks }}" == "true" ]]; then
-          sed -i.bak "s|SDK_FETCH_URL=.*|SDK_FETCH_URL=\"https://api.github.com/repos/${{ inputs.sdks-src }}/releases/latest\"|" "$THEOS/bin/install-sdk"
-
-          sdk_list=$("$THEOS/bin/install-sdk" 2>&1 | awk -F': ' '/Available/ {print $2}' | xargs -n1 | grep -vE "latest(-tv)?$")
-          for sdk in $(
-            (echo "$sdk_list" | grep '^AppleTVOS' | sort -V | tail -r | tail -n +2 | tail -r;
-            echo "$sdk_list" | grep '^iPhoneOS'  | sort -V | tail -r | tail -n +2 | tail -r) | xargs
-          ); do
-            "$THEOS/bin/install-sdk" "$sdk"
-          done
-
-          for sdk in $("$THEOS/bin/install-sdk" 2>&1 | awk -F': ' '/Available/ {print $2}' | xargs -n1 | grep -vE "latest(-tv)?$" | xargs); do "$THEOS/bin/install-sdk" "$sdk"; done
-        fi
-
-        if [[ "${{ inputs.libgcuniversal }}" == "true" ]]; then
-          git clone https://github.com/${{ inputs.libgcuniversal-src }}.git
-          cd $(basename "${{ inputs.libgcuniversal-src }}")
-          ./install.sh
-          cd ..
-        fi
-
-        if [[ "${{ inputs.altlist }}" == "true" ]]; then
-          git clone https://github.com/${{ inputs.altlist-src }}.git
-          cd $(basename "${{ inputs.altlist-src }}")
-          ./install_to_theos.sh
-          cd ..
-        fi
+    - name: Setup AltList
+      if: inputs.altlist == 'true'
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.altlist-src }}
+        ref: ${{ inputs.altlist-branch }}
+        path: ${{ github.workspace }}/altlist
+      shell: bash
+      run: |
+        # export THEOS=${{ inputs.theos-dir }}
+        cd ${{ github.workspace }}/altlist
+        ./install_to_theos.sh
 
     - name: Update Theos
-      if: inputs.theos-cache == 'true' && steps.theos-cache.outputs.cache-hit == 'true'
+      if: steps.theos-cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
-        export THEOS=${{ inputs.theos-dir }}
+        # export THEOS=${{ inputs.theos-dir }}
         $THEOS/bin/update-theos

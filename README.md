@@ -8,33 +8,35 @@ Currently, **only macOS runners** are supported.
 
 ### Configuration
 
-The following inputs are available (all are optional):
+The following inputs are available (all are optional) with their default values:
 
 ```yaml
-- uses: waruhachi/theos-action@v2.3.2
+- uses: waruhachi/theos-action@v2.3.3
   with:
-      theos-dir: '~/theos'
       theos-src: 'theos/theos'
       theos-branch: 'master'
-      sdks: true
+      theos-dir: '~/theos'
       sdks-src: 'theos/sdks'
-      theos-cache: true
-      libgcuniversal: true
+      sdks-branch: 'master'
+      libgcuniversal: 'true'
       libgcuniversal-src: 'MrGcGamer/LibGcUniversalDocumentation'
-      altlist: true
+      libgcuniversal-branch: 'master'
+      altlist: 'true'
       altlist-src: 'opa334/AltList'
+      altlist-branch: 'main'
 ```
 
--   **`theos-dir`**: Directory to install Theos to.
 -   **`theos-src`**: Repository to clone Theos from.
 -   **`theos-branch`**: Branch to clone Theos from.
--   **`theos-cache`**: Whether to cache Theos.
--   **`sdks`**: Whether to install custom SDKs.
--   **`sdks-src`**: Repository to clone custom SDKs from.
--   **`libgcuniversal`**: Whether to install LibGcUniversal.
+-   **`theos-dir`**: Directory to clone Theos to.
+-   **`sdks-src`**: Repository to clone patched SDKs from.
+-   **`sdks-branch`**: Branch to clone patched SDKs from.
+-   **`libgcuniversal`**: Whether to use LibGcUniversal.
 -   **`libgcuniversal-src`**: Repository to clone LibGcUniversal from.
--   **`altlist`**: Whether to install AltList.
+-   **`libgcuniversal-branch`**: Branch to clone LibGcUniversal from.
+-   **`altlist`**: Whether to use AltList.
 -   **`altlist-src`**: Repository to clone AltList from.
+-   **`altlist-branch`**: Branch to clone AltList from.
 
 ---
 
@@ -56,23 +58,24 @@ jobs:
               uses: actions/checkout@v4
 
             - name: Setup Theos
-              uses: waruhachi/theos-action@v2.3.2
+              uses: waruhachi/theos-action@v2.3.3
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                  theos-src: 'waruhachi/theos'
-                  theos-branch: 'main'
-                  theos-cache: true
-                  sdks: true
-                  sdks-src: 'waruhachi/sdks'
-                  libgcuniversal: true
-                  libgcuniversal-src: 'waruhachi/LibGcUniversal'
-                  altlist: true
-                  altlist-src: 'waruhachi/AltList'
+                theos-src: 'waruhachi/theos'
+                theos-branch: 'main'
+                sdks-src: 'waruhachi/sdks'
+                sdks-branch: 'main'
+                libgcuniversal: 'true'
+                libgcuniversal-src: 'waruhachi/LibGcUniversal'
+                libgcuniversal-branch: 'main'
+                altlist: 'true'
+                altlist-src: 'waruhachi/AltList'
+                altlist-branch: 'main'
 
             - name: Build tweak
               run: |
-                  make clean package FINALPACKAGE=1
-                  make clean package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless
-                  make clean package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=roothide
+                make clean package FINALPACKAGE=1
+                make clean package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless
+                make clean package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=roothide
 ```
