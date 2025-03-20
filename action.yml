@@ -54,6 +54,13 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Adding Theos Environment Variables
+      shell: bash
+      env:
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
+      run: |
+        echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
+
     - name: Generate Cache Key
       id: cache-key
       env:
@@ -124,8 +131,6 @@ runs:
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.libgcuniversal == 'true'
       shell: bash
       run: |
-        # export THEOS=${{ inputs.theos-dir }}
-
         cd ${{ github.workspace }}/libgcuniversal
         ./install.sh
 
@@ -141,8 +146,6 @@ runs:
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.altlist == 'true'
       shell: bash
       run: |
-        # export THEOS=${{ inputs.theos-dir }}
-
         cd ${{ github.workspace }}/altlist
         ./install_to_theos.sh
 
@@ -150,13 +153,4 @@ runs:
       if: steps.theos-cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
-        # export THEOS=${{ inputs.theos-dir }}
-
         $THEOS/bin/update-theos
-
-    - name: Adding Theos Environment Variables
-      shell: bash
-      env:
-        GITHUB_ACTION_PATH: ${{ github.action_path }}
-      run: |
-        echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
