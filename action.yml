@@ -79,13 +79,6 @@ runs:
 
         echo "key=${{ inputs.theos-src }}-${{ inputs.theos-branch }}-$theos_sha|${{ inputs.sdks-src }}-${{ inputs.sdks-branch }}-$sdks_sha|${{ inputs.libgcuniversal-src }}-${{ inputs.libgcuniversal-branch }}-$libgc_sha|${{ inputs.altlist-src }}-${{ inputs.altlist-branch }}-$altlist_sha" >> $GITHUB_OUTPUT
 
-    - name: Adding Theos Environment Variables
-      shell: bash
-      env:
-        GITHUB_ACTION_PATH: ${{ github.action_path }}
-      run: |
-        echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
-
     - name: Install dependencies
       shell: bash
       run: |
@@ -160,3 +153,10 @@ runs:
         # export THEOS=${{ inputs.theos-dir }}
 
         $THEOS/bin/update-theos
+
+    - name: Adding Theos Environment Variables
+      shell: bash
+      env:
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
+      run: |
+        echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
