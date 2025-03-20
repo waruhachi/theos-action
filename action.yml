@@ -79,6 +79,13 @@ runs:
 
         echo "key=${{ inputs.theos-src }}-${{ inputs.theos-branch }}-$theos_sha|${{ inputs.sdks-src }}-${{ inputs.sdks-branch }}-$sdks_sha|${{ inputs.libgcuniversal-src }}-${{ inputs.libgcuniversal-branch }}-$libgc_sha|${{ inputs.altlist-src }}-${{ inputs.altlist-branch }}-$altlist_sha" >> $GITHUB_OUTPUT
 
+    - name: Adding Theos Environment Variables
+      shell: bash
+      env:
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
+      run: |
+        echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
+
     - name: Install dependencies
       shell: bash
       run: |
@@ -91,7 +98,7 @@ runs:
       id: theos-cache
       uses: actions/cache@v4
       with:
-        path: ${{ inputs.theos-dir }}
+        path: $THEOS
         key: ${{ steps.cache-key.outputs.key }}
 
     - name: Setup Theos
@@ -101,14 +108,7 @@ runs:
         repository: ${{ inputs.theos-src }}
         ref: ${{ inputs.theos-branch }}
         submodules: recursive
-        path: ${{ inputs.theos-dir }}
-
-    - name: Adding Theos Environment Variables
-      shell: bash
-      env:
-        GITHUB_ACTION_PATH: ${{ github.action_path }}
-      run: |
-        echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
+        path: $THEOS
 
     - name: Setup SDKs
       if: steps.theos-cache.outputs.cache-hit != 'true'
@@ -117,7 +117,7 @@ runs:
         repository: ${{ inputs.sdks-src }}
         ref: ${{ inputs.sdks-branch }}
         submodules: recursive
-        path: ${{ inputs.theos-dir }}/sdks
+        path: $THEOS/sdks
 
     - name: Setup LibGcUniversal
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.libgcuniversal == 'true'
