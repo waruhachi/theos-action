@@ -55,7 +55,7 @@ runs:
       env:
         GITHUB_ACTION_PATH: ${{ github.action_path }}
       run: |
-        echo "THEOS=~/theos" >> $GITHUB_ENV
+        echo "THEOS=/Users/runner/theos" >> $GITHUB_ENV
 
     - name: Generate Cache Key
       id: cache-key
@@ -94,7 +94,7 @@ runs:
       id: theos-cache
       uses: actions/cache@v4
       with:
-        path: ~/theos
+        path: /Users/runner/theos
         key: ${{ steps.cache-key.outputs.key }}
 
     - name: Setup Theos
@@ -104,7 +104,7 @@ runs:
         repository: ${{ inputs.theos-src }}
         ref: ${{ inputs.theos-branch }}
         submodules: recursive
-        path: ~/theos
+        path: /Users/runner/theos
 
     - name: Setup SDKs
       if: steps.theos-cache.outputs.cache-hit != 'true'
