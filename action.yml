@@ -150,11 +150,8 @@ runs:
       run: |
         export THEOS=${{ inputs.theos-dir }}
 
-        ls -la $THEOS
-        echo "=================="
-        ls -la $THEOS/makefiles
-        echo "=================="
-        ls -la theos
+        cd $THEOS/makefiles
+        ls -la
 
         cd altlist
         ./install_to_theos.sh
