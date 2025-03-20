@@ -118,7 +118,7 @@ runs:
       with:
         repository: ${{ inputs.libgcuniversal-src }}
         ref: ${{ inputs.libgcuniversal-branch }}
-        path: ${{ env.HOME }}/libgcuniversal
+        path: ${{ github.workspace }}/libgcuniversal
 
     - name: Install LibGcUniversal
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.libgcuniversal == 'true'
@@ -126,7 +126,7 @@ runs:
       run: |
         export THEOS=${{ inputs.theos-dir }}
 
-        cd ${{ env.HOME }}/libgcuniversal
+        cd ${{ github.workspace }}/libgcuniversal
         ./install.sh
 
     - name: Setup AltList
@@ -135,7 +135,7 @@ runs:
       with:
         repository: ${{ inputs.altlist-src }}
         ref: ${{ inputs.altlist-branch }}
-        path: ${{ env.HOME }}/altlist
+        path: ${{ github.workspace }}/altlist
 
     - name: Install AltList
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.altlist == 'true'
@@ -143,7 +143,7 @@ runs:
       run: |
         export THEOS=${{ inputs.theos-dir }}
 
-        cd ${{ env.HOME }}/altlist
+        cd ${{ github.workspace }}/altlist
         ./install_to_theos.sh
 
     - name: Update Theos
