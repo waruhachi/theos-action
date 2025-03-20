@@ -153,6 +153,8 @@ runs:
         cd $THEOS/makefiles
         ls -la
 
+        cd ${{ github.workspace }}
+
         cd altlist
         ./install_to_theos.sh
 
