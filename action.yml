@@ -91,7 +91,7 @@ runs:
       run: |
         set -euo pipefail
 
-        brew install xz make ldid
+        brew install make ldid
         echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
 
     - name: Theos Cache
