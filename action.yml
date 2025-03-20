@@ -122,10 +122,10 @@ runs:
 
     - name: Install LibGcUniversal
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.libgcuniversal == 'true'
-      env:
-        THEOS: ${{ inputs.theos-dir }}
       shell: bash
       run: |
+        export THEOS=${{ inputs.theos-dir }}
+
         cd ${{ github.workspace }}/libgcuniversal
         ./install.sh
 
@@ -139,17 +139,17 @@ runs:
 
     - name: Install AltList
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.altlist == 'true'
-      env:
-        THEOS: ${{ inputs.theos-dir }}
       shell: bash
       run: |
+        export THEOS=${{ inputs.theos-dir }}
+
         cd ${{ github.workspace }}/altlist
         ./install_to_theos.sh
 
     - name: Update Theos
       if: steps.theos-cache.outputs.cache-hit == 'true'
-      env:
-        THEOS: ${{ inputs.theos-dir }}
       shell: bash
       run: |
+        export THEOS=${{ inputs.theos-dir }}
+
         $THEOS/bin/update-theos
