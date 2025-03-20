@@ -150,8 +150,8 @@ runs:
       run: |
         export THEOS=${{ inputs.theos-dir }}
 
-        cd $THEOS/makefiles
-        ls -la
+        cd $THEOS
+        ls -la makefiles
         echo $PWD
 
         cd ${{ github.workspace }}
