@@ -17,7 +17,7 @@ inputs:
   theos-dir:
     description: "Where to install Theos"
     required: false
-    default: "~/theos"
+    default: "$HOME/theos"
   sdks-src:
     description: "What repo to clone the patched SDK from"
     required: false
@@ -118,7 +118,7 @@ runs:
       with:
         repository: ${{ inputs.libgcuniversal-src }}
         ref: ${{ inputs.libgcuniversal-branch }}
-        path: ${{ github.workspace }}/libgcuniversal
+        path: ${{ env.HOME }}/libgcuniversal
 
     - name: Install LibGcUniversal
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.libgcuniversal == 'true'
@@ -126,7 +126,7 @@ runs:
       run: |
         export THEOS=${{ inputs.theos-dir }}
 
-        cd ${{ github.workspace }}/libgcuniversal
+        cd ${{ env.HOME }}/libgcuniversal
         ./install.sh
 
     - name: Setup AltList
@@ -135,7 +135,7 @@ runs:
       with:
         repository: ${{ inputs.altlist-src }}
         ref: ${{ inputs.altlist-branch }}
-        path: ${{ github.workspace }}/altlist
+        path: ${{ env.HOME }}/altlist
 
     - name: Install AltList
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.altlist == 'true'
@@ -143,7 +143,7 @@ runs:
       run: |
         export THEOS=${{ inputs.theos-dir }}
 
-        cd ${{ github.workspace }}/altlist
+        cd ${{ env.HOME }}/altlist
         ./install_to_theos.sh
 
     - name: Update Theos
