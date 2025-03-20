@@ -17,7 +17,7 @@ inputs:
   theos-dir:
     description: "Where to install Theos"
     required: false
-    default: "$HOME/theos"
+    default: "~/theos"
   sdks-src:
     description: "What repo to clone the patched SDK from"
     required: false
