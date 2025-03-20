@@ -86,7 +86,6 @@ runs:
 
         brew install xz make ldid
         echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
-        # echo PATH=\"$(brew --prefix make)/libexec/gnubin:\$PATH\" >> ~/.bash_profile
 
     - name: Theos Cache
       id: theos-cache
@@ -114,32 +113,36 @@ runs:
         path: ${{ inputs.theos-dir }}/sdks
 
     - name: Setup LibGcUniversal
-      if: inputs.libgcuniversal == 'true'
+      if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.libgcuniversal == 'true'
       uses: actions/checkout@v4
       with:
         repository: ${{ inputs.libgcuniversal-src }}
         ref: ${{ inputs.libgcuniversal-branch }}
         path: ${{ github.workspace }}/libgcuniversal
+
+    - name: Install LibGcUniversal
+      if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.libgcuniversal == 'true'
       env:
         THEOS: ${{ inputs.theos-dir }}
       shell: bash
       run: |
-        # export THEOS=${{ inputs.theos-dir }}
         cd ${{ github.workspace }}/libgcuniversal
         ./install.sh
 
     - name: Setup AltList
-      if: inputs.altlist == 'true'
+      if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.altlist == 'true'
       uses: actions/checkout@v4
       with:
         repository: ${{ inputs.altlist-src }}
         ref: ${{ inputs.altlist-branch }}
         path: ${{ github.workspace }}/altlist
+
+    - name: Install AltList
+      if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.altlist == 'true'
       env:
         THEOS: ${{ inputs.theos-dir }}
       shell: bash
       run: |
-        # export THEOS=${{ inputs.theos-dir }}
         cd ${{ github.workspace }}/altlist
         ./install_to_theos.sh
 
@@ -149,5 +152,4 @@ runs:
         THEOS: ${{ inputs.theos-dir }}
       shell: bash
       run: |
-        # export THEOS=${{ inputs.theos-dir }}
         $THEOS/bin/update-theos
