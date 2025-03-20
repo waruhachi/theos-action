@@ -55,7 +55,7 @@ runs:
       env:
         GITHUB_ACTION_PATH: ${{ github.action_path }}
       run: |
-        echo "THEOS=theos" >> $GITHUB_ENV
+        echo "THEOS=${{ github.workspace }}/theos" >> $GITHUB_ENV
 
     - name: Generate Cache Key
       id: cache-key
@@ -127,8 +127,6 @@ runs:
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.libgcuniversal == 'true'
       shell: bash
       run: |
-        # export THEOS=${{ inputs.theos-dir }}
-
         cd libgcuniversal
         ./install.sh
 
@@ -144,13 +142,6 @@ runs:
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.altlist == 'true'
       shell: bash
       run: |
-        echo $THEOS
-        cd $THEOS
-        ls -la makefiles
-
-        cd ${{ github.workspace }}
-        export THEOS=theos
-
         cd altlist
         ./install_to_theos.sh
 
@@ -158,6 +149,4 @@ runs:
       if: steps.theos-cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
-        # export THEOS=${{ inputs.theos-dir }}
-
         $THEOS/bin/update-theos
