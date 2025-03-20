@@ -17,7 +17,7 @@ inputs:
   theos-dir:
     description: "Where to install Theos"
     required: false
-    default: "theos"
+    default: "$HOME/theos"
   sdks-src:
     description: "What repo to clone the patched SDK from"
     required: false
@@ -155,7 +155,6 @@ runs:
         echo $PWD
 
         cd ${{ github.workspace }}
-
         cd altlist
         ./install_to_theos.sh
 
