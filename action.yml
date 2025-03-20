@@ -56,7 +56,6 @@ runs:
         GITHUB_ACTION_PATH: ${{ github.action_path }}
       run: |
         echo "THEOS=${{ github.workspace }}/theos" >> $GITHUB_ENV
-        echo "THEOS=${{ github.workspace }}/theos" >> $GITHUB_OUTPUT
 
     - name: Generate Cache Key
       id: cache-key
@@ -95,7 +94,7 @@ runs:
       id: theos-cache
       uses: actions/cache@v4
       with:
-        path: theos
+        path: ${{ github.workspace }}/theos
         key: ${{ steps.cache-key.outputs.key }}
 
     - name: Setup Theos
