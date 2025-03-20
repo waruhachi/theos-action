@@ -54,6 +54,13 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Adding Theos Environment Variables
+      shell: bash
+      env:
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
+      run: |
+        echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
+
     - name: Generate Cache Key
       id: cache-key
       env:
@@ -153,10 +160,3 @@ runs:
         export THEOS=${{ inputs.theos-dir }}
 
         $THEOS/bin/update-theos
-
-    - name: Adding Theos Environment Variables
-      shell: bash
-      env:
-        GITHUB_ACTION_PATH: ${{ github.action_path }}
-      run: |
-        echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
