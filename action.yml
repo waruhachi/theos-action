@@ -14,10 +14,6 @@ inputs:
     description: "What branch to clone Theos from"
     required: false
     default: "master"
-  theos-dir:
-    description: "Where to install Theos"
-    required: false
-    default: "$HOME/theos"
   sdks-src:
     description: "What repo to clone the patched SDK from"
     required: false
@@ -59,7 +55,7 @@ runs:
       env:
         GITHUB_ACTION_PATH: ${{ github.action_path }}
       run: |
-        echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
+        echo "THEOS=theos" >> $GITHUB_ENV
 
     - name: Generate Cache Key
       id: cache-key
@@ -98,7 +94,7 @@ runs:
       id: theos-cache
       uses: actions/cache@v4
       with:
-        path: ${{ inputs.theos-dir }}
+        path: theos
         key: ${{ steps.cache-key.outputs.key }}
 
     - name: Setup Theos
@@ -108,7 +104,7 @@ runs:
         repository: ${{ inputs.theos-src }}
         ref: ${{ inputs.theos-branch }}
         submodules: recursive
-        path: ${{ inputs.theos-dir }}
+        path: theos
 
     - name: Setup SDKs
       if: steps.theos-cache.outputs.cache-hit != 'true'
@@ -117,7 +113,7 @@ runs:
         repository: ${{ inputs.sdks-src }}
         ref: ${{ inputs.sdks-branch }}
         submodules: recursive
-        path: ${{ inputs.theos-dir }}/sdks
+        path: theos/sdks
 
     - name: Setup LibGcUniversal
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.libgcuniversal == 'true'
@@ -131,7 +127,7 @@ runs:
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.libgcuniversal == 'true'
       shell: bash
       run: |
-        export THEOS=${{ inputs.theos-dir }}
+        # export THEOS=${{ inputs.theos-dir }}
 
         cd libgcuniversal
         ./install.sh
@@ -148,7 +144,7 @@ runs:
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.altlist == 'true'
       shell: bash
       run: |
-        export THEOS=${{ inputs.theos-dir }}
+        # export THEOS=${{ inputs.theos-dir }}
 
         cd $THEOS
         echo $PWD
@@ -162,6 +158,6 @@ runs:
       if: steps.theos-cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
-        export THEOS=${{ inputs.theos-dir }}
+        # export THEOS=${{ inputs.theos-dir }}
 
         $THEOS/bin/update-theos
