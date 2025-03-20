@@ -152,6 +152,7 @@ runs:
 
         cd $THEOS/makefiles
         ls -la
+        echo $PWD
 
         cd ${{ github.workspace }}
 
