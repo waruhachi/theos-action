@@ -151,8 +151,8 @@ runs:
         export THEOS=${{ inputs.theos-dir }}
 
         cd $THEOS
-        ls -la makefiles
         echo $PWD
+        ls -la
 
         cd ${{ github.workspace }}
         cd altlist
