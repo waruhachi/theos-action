@@ -103,6 +103,13 @@ runs:
         submodules: recursive
         path: ${{ inputs.theos-dir }}
 
+    - name: Adding Theos Environment Variables
+      shell: bash
+      env:
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
+      run: |
+        echo "THEOS=${{ inputs.theos-dir }}" >> $GITHUB_ENV
+
     - name: Setup SDKs
       if: steps.theos-cache.outputs.cache-hit != 'true'
       uses: actions/checkout@v4
@@ -124,7 +131,7 @@ runs:
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.libgcuniversal == 'true'
       shell: bash
       run: |
-        export THEOS=${{ inputs.theos-dir }}
+        # export THEOS=${{ inputs.theos-dir }}
 
         cd ${{ github.workspace }}/libgcuniversal
         ./install.sh
@@ -141,7 +148,7 @@ runs:
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.altlist == 'true'
       shell: bash
       run: |
-        export THEOS=${{ inputs.theos-dir }}
+        # export THEOS=${{ inputs.theos-dir }}
 
         cd ${{ github.workspace }}/altlist
         ./install_to_theos.sh
@@ -150,6 +157,6 @@ runs:
       if: steps.theos-cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
-        export THEOS=${{ inputs.theos-dir }}
+        # export THEOS=${{ inputs.theos-dir }}
 
         $THEOS/bin/update-theos
