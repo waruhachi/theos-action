@@ -150,11 +150,11 @@ runs:
       run: |
         export THEOS=${{ inputs.theos-dir }}
 
-        echo "THEOS=$THEOS"
         ls -la $THEOS
-        echo "====================="
-        echo "GITHUB_WORKSPACE=${{ github.workspace }}"
-        ls -la ${{ github.workspace }}
+        echo "=================="
+        ls -la $THEOS/makefiles
+        echo "=================="
+        ls -la theos
 
         cd altlist
         ./install_to_theos.sh
