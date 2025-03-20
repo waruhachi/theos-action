@@ -55,7 +55,7 @@ runs:
       env:
         GITHUB_ACTION_PATH: ${{ github.action_path }}
       run: |
-        echo "THEOS=${{ github.workspace }}/theos" >> $GITHUB_ENV
+        echo "THEOS=$HOME/theos" >> $GITHUB_ENV
 
     - name: Generate Cache Key
       id: cache-key
