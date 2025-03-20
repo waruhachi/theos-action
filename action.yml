@@ -98,7 +98,7 @@ runs:
       id: theos-cache
       uses: actions/cache@v4
       with:
-        path: ${{ env.THEOS }}
+        path: ${{ inputs.theos-dir }}
         key: ${{ steps.cache-key.outputs.key }}
 
     - name: Setup Theos
@@ -108,7 +108,7 @@ runs:
         repository: ${{ inputs.theos-src }}
         ref: ${{ inputs.theos-branch }}
         submodules: recursive
-        path: ${{ env.THEOS }}
+        path: ${{ inputs.theos-dir }}
 
     - name: Setup SDKs
       if: steps.theos-cache.outputs.cache-hit != 'true'
@@ -117,7 +117,7 @@ runs:
         repository: ${{ inputs.sdks-src }}
         ref: ${{ inputs.sdks-branch }}
         submodules: recursive
-        path: ${{ env.THEOS }}/sdks
+        path: ${{ inputs.theos-dir }}/sdks
 
     - name: Setup LibGcUniversal
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.libgcuniversal == 'true'
