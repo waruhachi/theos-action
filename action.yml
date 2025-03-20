@@ -144,13 +144,13 @@ runs:
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.altlist == 'true'
       shell: bash
       run: |
-        # export THEOS=${{ inputs.theos-dir }}
-
+        echo $THEOS
         cd $THEOS
-        echo $PWD
-        ls -la
+        ls -la makefiles
 
         cd ${{ github.workspace }}
+        export THEOS=theos
+
         cd altlist
         ./install_to_theos.sh
 
