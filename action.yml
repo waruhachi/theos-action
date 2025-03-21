@@ -52,8 +52,6 @@ runs:
   steps:
     - name: Adding Theos Environment Variables
       shell: bash
-      env:
-        GITHUB_ACTION_PATH: ${{ github.action_path }}
       run: |
         echo "THEOS=${{ github.workspace }}/theos" >> $GITHUB_ENV
 
@@ -94,7 +92,7 @@ runs:
       id: theos-cache
       uses: actions/cache@v4
       with:
-        path: ${{ github.workspace }}/theos
+        path: ${{ env.THEOS }}
         key: ${{ steps.cache-key.outputs.key }}
 
     - name: Setup Theos
@@ -104,7 +102,7 @@ runs:
         repository: ${{ inputs.theos-src }}
         ref: ${{ inputs.theos-branch }}
         submodules: recursive
-        path: ${{ github.workspace }}/theos
+        path: ${{ env.THEOS }}
 
     - name: Setup SDKs
       if: steps.theos-cache.outputs.cache-hit != 'true'
@@ -113,7 +111,7 @@ runs:
         repository: ${{ inputs.sdks-src }}
         ref: ${{ inputs.sdks-branch }}
         submodules: recursive
-        path: theos/sdks
+        path: ${{ env.THEOS }}/sdks
 
     - name: Setup LibGcUniversal
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.libgcuniversal == 'true'
@@ -150,9 +148,3 @@ runs:
       shell: bash
       run: |
         $THEOS/bin/update-theos
-
-    - name: Upload Theos Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: theos
-        path: ${{ github.workspace }}/theos
