@@ -11,11 +11,10 @@ Currently, **only macOS runners** are supported.
 The following inputs are available (all are optional) with their default values:
 
 ```yaml
-- uses: waruhachi/theos-action@v2.3.6
+- uses: waruhachi/theos-action@v2.4.6
   with:
       theos-src: 'theos/theos'
       theos-branch: 'master'
-      theos-dir: '~/theos'
       sdks-src: 'theos/sdks'
       sdks-branch: 'master'
       libgcuniversal: true
@@ -28,7 +27,6 @@ The following inputs are available (all are optional) with their default values:
 
 -   **`theos-src`**: Repository to clone Theos from.
 -   **`theos-branch`**: Branch to clone Theos from.
--   **`theos-dir`**: Directory to clone Theos to.
 -   **`sdks-src`**: Repository to clone patched SDKs from.
 -   **`sdks-branch`**: Branch to clone patched SDKs from.
 -   **`libgcuniversal`**: Whether to use LibGcUniversal.
@@ -58,9 +56,7 @@ jobs:
               uses: actions/checkout@v4
 
             - name: Setup Theos
-              uses: waruhachi/theos-action@v2.3.3
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              uses: waruhachi/theos-action@v2.4.6
               with:
                 theos-src: 'waruhachi/theos'
                 theos-branch: 'main'
@@ -73,7 +69,7 @@ jobs:
                 altlist-src: 'waruhachi/AltList'
                 altlist-branch: 'main'
 
-            - name: Build tweak
+            - name: Build Tweak
               run: |
                 make clean package FINALPACKAGE=1
                 make clean package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless
