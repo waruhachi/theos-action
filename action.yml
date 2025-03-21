@@ -143,17 +143,6 @@ runs:
         cd altlist
         ./install_to_theos.sh
 
-    - name: Debug Logs
-      if: steps.theos-cache.outputs.cache-hit != 'true'
-      shell: bash
-      run: |
-        echo "$THEOS: $THEOS"
-        echo "env.THEOS: ${{ env.THEOS }}"
-        echo "PWD: $PWD"
-
-        ls -la
-        ls -la $THEOS
-
     - name: Update Theos
       if: steps.theos-cache.outputs.cache-hit == 'true'
       shell: bash
