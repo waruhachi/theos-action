@@ -11,7 +11,7 @@ Currently, **only macOS runners** are supported.
 The following inputs are available (all are optional) with their default values:
 
 ```yaml
-- uses: waruhachi/theos-action@v2.4.7
+- uses: waruhachi/theos-action@v2.4.8
   with:
       theos-src: 'theos/theos'
       theos-branch: 'master'
@@ -26,6 +26,9 @@ The following inputs are available (all are optional) with their default values:
       comet: true
       comet-src: 'ginsudev/Comet'
       comet-branch: 'main'
+      orion: true
+      orion-src: 'theos/orion'
+      orion-branch: 'master'
 ```
 
 -   **`theos-src`**: Repository to clone Theos from.
@@ -41,6 +44,9 @@ The following inputs are available (all are optional) with their default values:
 -   **`comet`**: Whether to use Comet.
 -   **`comet-src`**: Repository to clone Comet from.
 -   **`comet-branch`**: Branch to clone Comet from.
+-   **`orion`**: Whether to use Orion.
+-   **`orion-src`**: Repository to clone Orion from.
+-   **`orion-branch`**: Branch to clone Orion from.
 
 ---
 
@@ -77,6 +83,9 @@ jobs:
                 altlist: 'true'
                 altlist-src: 'waruhachi/Comet'
                 altlist-branch: 'main'
+                orion: true
+                orion-src: 'waruhachi/Orion'
+                orion-branch: 'main'
 
             - name: Build Tweak
               run: |

@@ -58,6 +58,18 @@ inputs:
     description: "What branch to clone Comet from"
     required: false
     default: "main"
+  orion:
+    description: "Whether to install Orion"
+    required: false
+    default: "false"
+  orion-src:
+    description: "What repo to clone Orion from"
+    required: false
+    default: "theos/orion"
+  orion-branch:
+    description: "What branch to clone Orion from"
+    required: false
+    default: "master"
 
 runs:
   using: "composite"
@@ -170,6 +182,29 @@ runs:
         cd comet
         make package
         cp -r $(THEOS_OBJ_DIR)/Comet.framework $(THEOS)/lib/
+
+    - name: Setup Orion
+      if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.orion == 'true'
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.orion-src }}
+        ref: ${{ inputs.orion-branch }}
+        path: orion
+
+    - name: Install Orion
+      if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.orion == 'true'
+      shell: bash
+      run: |
+        cd orion
+
+        ZIP_URL="$(gh api repos/${{ inputs.orion-src }}/releases/latest --jq .zipball_url)"
+        curl -L -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "$ZIP_URL" -o orion.zip
+
+        rm -rf release
+        mkdir -p release
+        unzip -q orion.zip -d release
+
+        cp -R release/*/Orion.framework "$THEOS/lib/"
 
     - name: Update Theos
       if: steps.theos-cache.outputs.cache-hit == 'true'
