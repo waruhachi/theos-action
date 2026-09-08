@@ -178,12 +178,10 @@ runs:
     - name: Install Comet
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.comet == 'true'
       shell: bash
-      env:
-        THEOS_OBJ_DIR: ${{ env.THEOS }}/.theos
       run: |
         cd comet
         make package
-        cp -r "${THEOS_OBJ_DIR}/Comet.framework" "$THEOS/lib/"
+        cp -r ".theos/Comet.framework" "$THEOS/lib/"
 
     - name: Setup Orion
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.orion == 'true'
