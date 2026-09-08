@@ -46,6 +46,18 @@ inputs:
     description: "What branch to clone AltList from"
     required: false
     default: "main"
+  comet:
+    description: "Whether to install Comet"
+    required: false
+    default: "false"
+  comet-src:
+    description: "What repo to clone Comet from"
+    required: false
+    default: "ginsudev/Comet"
+  comet-branch:
+    description: "What branch to clone Comet from"
+    required: false
+    default: "main"
 
 runs:
   using: "composite"
@@ -142,6 +154,22 @@ runs:
       run: |
         cd altlist
         ./install_to_theos.sh
+
+    - name: Setup Comet
+      if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.comet == 'true'
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.comet-src }}
+        ref: ${{ inputs.comet-branch }}
+        path: comet
+
+    - name: Install Comet
+      if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.comet == 'true'
+      shell: bash
+      run: |
+        cd comet
+        make package
+        cp -r $(THEOS_OBJ_DIR)/Comet.framework $(THEOS)/lib/
 
     - name: Update Theos
       if: steps.theos-cache.outputs.cache-hit == 'true'

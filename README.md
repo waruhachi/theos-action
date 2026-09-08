@@ -11,7 +11,7 @@ Currently, **only macOS runners** are supported.
 The following inputs are available (all are optional) with their default values:
 
 ```yaml
-- uses: waruhachi/theos-action@v2.4.6
+- uses: waruhachi/theos-action@v2.4.7
   with:
       theos-src: 'theos/theos'
       theos-branch: 'master'
@@ -23,6 +23,9 @@ The following inputs are available (all are optional) with their default values:
       altlist: true
       altlist-src: 'opa334/AltList'
       altlist-branch: 'main'
+      comet: true
+      comet-src: 'ginsudev/Comet'
+      comet-branch: 'main'
 ```
 
 -   **`theos-src`**: Repository to clone Theos from.
@@ -35,6 +38,9 @@ The following inputs are available (all are optional) with their default values:
 -   **`altlist`**: Whether to use AltList.
 -   **`altlist-src`**: Repository to clone AltList from.
 -   **`altlist-branch`**: Branch to clone AltList from.
+-   **`comet`**: Whether to use Comet.
+-   **`comet-src`**: Repository to clone Comet from.
+-   **`comet-branch`**: Branch to clone Comet from.
 
 ---
 
@@ -67,6 +73,9 @@ jobs:
                 libgcuniversal-branch: 'main'
                 altlist: 'true'
                 altlist-src: 'waruhachi/AltList'
+                altlist-branch: 'main'
+                altlist: 'true'
+                altlist-src: 'waruhachi/Comet'
                 altlist-branch: 'main'
 
             - name: Build Tweak
