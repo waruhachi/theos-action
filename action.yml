@@ -161,7 +161,7 @@ runs:
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.remotelog == 'true'
       shell: bash
       run: |
-        cd libgcuniversal
+        cd remotelog
         cp "RemoteLog.h" "$THEOS/include/"
 
     - name: Setup LibGcUniversal
