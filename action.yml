@@ -65,7 +65,7 @@ inputs:
   comet-src:
     description: "What repo to clone Comet from"
     required: false
-    default: "ginsudev/Comet"
+    default: "waruhachi/Comet"
   comet-branch:
     description: "What branch to clone Comet from"
     required: false
@@ -207,8 +207,7 @@ runs:
       shell: bash
       run: |
         cd comet
-        make clean package FINALPACKAGE=1
-        cp -R ".theos/obj/Comet.framework" "$THEOS/lib/"
+        ./install_to_theos.sh
 
     - name: Setup Orion
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.orion == 'true'

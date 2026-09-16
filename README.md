@@ -11,7 +11,7 @@ Currently, **only macOS runners** are supported.
 The following inputs are available (all are optional) with their default values:
 
 ```yaml
-- uses: waruhachi/theos-action@v2.6.2
+- uses: waruhachi/theos-action@v2.6.3
   with:
       theos-src: 'theos/theos'
       theos-branch: 'master'
@@ -27,7 +27,7 @@ The following inputs are available (all are optional) with their default values:
       altlist-src: 'opa334/AltList'
       altlist-branch: 'main'
       comet: true
-      comet-src: 'ginsudev/Comet'
+      comet-src: 'waruhachi/Comet'
       comet-branch: 'main'
       orion: true
       orion-src: 'theos/orion'
@@ -74,7 +74,7 @@ jobs:
               uses: actions/checkout@v4
 
             - name: Setup Theos
-              uses: waruhachi/theos-action@v2.6.2
+              uses: waruhachi/theos-action@v2.6.3
               with:
                 theos-src: 'waruhachi/theos'
                 theos-branch: 'main'
