@@ -181,6 +181,7 @@ runs:
       run: |
         cd comet
         make package
+        ls -la .theos/
         cp -r ".theos/Comet.framework" "$THEOS/lib/"
 
     - name: Setup Orion
