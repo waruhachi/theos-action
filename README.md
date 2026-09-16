@@ -11,12 +11,15 @@ Currently, **only macOS runners** are supported.
 The following inputs are available (all are optional) with their default values:
 
 ```yaml
-- uses: waruhachi/theos-action@v2.5.0
+- uses: waruhachi/theos-action@v2.6.0
   with:
       theos-src: 'theos/theos'
       theos-branch: 'master'
       sdks-src: 'theos/sdks'
       sdks-branch: 'master'
+      remotelog: true
+      remotelog-src: 'Muirey03/RemoteLog'
+      remotelog-branch: 'master'
       libgcuniversal: true
       libgcuniversal-src: 'MrGcGamer/LibGcUniversalDocumentation'
       libgcuniversal-branch: 'master'
@@ -35,6 +38,9 @@ The following inputs are available (all are optional) with their default values:
 -   **`theos-branch`**: Branch to clone Theos from.
 -   **`sdks-src`**: Repository to clone patched SDKs from.
 -   **`sdks-branch`**: Branch to clone patched SDKs from.
+-   **`remotelog`**: Whether to use RemoteLog.
+-   **`remotelog-src`**: Repository to clone RemoteLog from.
+-   **`remotelog-branch`**: Branch to clone RemoteLog from.
 -   **`libgcuniversal`**: Whether to use LibGcUniversal.
 -   **`libgcuniversal-src`**: Repository to clone LibGcUniversal from.
 -   **`libgcuniversal-branch`**: Branch to clone LibGcUniversal from.
@@ -68,22 +74,25 @@ jobs:
               uses: actions/checkout@v4
 
             - name: Setup Theos
-              uses: waruhachi/theos-action@v2.5.0
+              uses: waruhachi/theos-action@v2.6.0
               with:
                 theos-src: 'waruhachi/theos'
                 theos-branch: 'main'
                 sdks-src: 'waruhachi/sdks'
                 sdks-branch: 'main'
+                remotelog: true
+                remotelog-src: 'waruhachi/RemoteLog'
+                remotelog-branch: 'main'
                 libgcuniversal: 'true'
                 libgcuniversal-src: 'waruhachi/LibGcUniversal'
                 libgcuniversal-branch: 'main'
                 altlist: 'true'
                 altlist-src: 'waruhachi/AltList'
                 altlist-branch: 'main'
-                altlist: 'true'
-                altlist-src: 'waruhachi/Comet'
-                altlist-branch: 'main'
-                orion: true
+                comet: 'true'
+                comet-src: 'waruhachi/Comet'
+                comet-branch: 'main'
+                orion: 'true'
                 orion-src: 'waruhachi/Orion'
                 orion-branch: 'main'
 

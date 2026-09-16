@@ -22,6 +22,18 @@ inputs:
     description: "What branch to clone the patched SDK from"
     required: false
     default: "master"
+  remotelog:
+    description: "Whether to install RemoteLog"
+    required: false
+    default: "false"
+  remotelog-src:
+    description: "What repo to clone RemoteLog from"
+    required: false
+    default: "Muirey03/RemoteLog"
+  remotelog-branch:
+    description: "What branch to clone RemoteLog from"
+    required: false
+    default: "master"
   libgcuniversal:
     description: "Whether to install LibGcUniversal"
     required: false
@@ -137,6 +149,21 @@ runs:
         submodules: recursive
         path: ${{ env.THEOS }}/sdks
 
+    - name: Setup RemoteLog
+      if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.remotelog == 'true'
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.remotelog-src }}
+        ref: ${{ inputs.remotelog-branch }}
+        path: remotelog
+
+    - name: Install RemoteLog
+      if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.remotelog == 'true'
+      shell: bash
+      run: |
+        cd libgcuniversal
+        cp "RemoteLog.h" "$THEOS/include/"
+
     - name: Setup LibGcUniversal
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.libgcuniversal == 'true'
       uses: actions/checkout@v4
@@ -181,7 +208,7 @@ runs:
       run: |
         cd comet
         make clean package
-        cp -r ".theos/obj/debug/Comet.framework" "$THEOS/lib/"
+        cp -R ".theos/obj/debug/Comet.framework" "$THEOS/lib/"
 
     - name: Setup Orion
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.orion == 'true'
