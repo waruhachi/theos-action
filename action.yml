@@ -207,8 +207,8 @@ runs:
       shell: bash
       run: |
         cd comet
-        make clean package
-        cp -R ".theos/obj/debug/Comet.framework" "$THEOS/lib/"
+        make clean package FINALPACKAGE=1
+        cp -R ".theos/obj/Comet.framework" "$THEOS/lib/"
 
     - name: Setup Orion
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.orion == 'true'
