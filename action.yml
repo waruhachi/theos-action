@@ -180,10 +180,9 @@ runs:
       shell: bash
       run: |
         cd comet
-        make package
-        ls -la .theos/obj
-        test -d "$THEOS/lib/Comet.framework"
-        cp -r ".theos/obj/Comet.framework" "$THEOS/lib/"
+        make clean package
+        ls -la .theos/obj/debug
+        cp -r ".theos/obj/debug/Comet.framework" "$THEOS/lib/"
 
     - name: Setup Orion
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.orion == 'true'
