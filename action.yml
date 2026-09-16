@@ -181,7 +181,6 @@ runs:
       run: |
         cd comet
         make clean package
-        ls -la .theos/obj/debug
         cp -r ".theos/obj/debug/Comet.framework" "$THEOS/lib/"
 
     - name: Setup Orion
@@ -198,16 +197,28 @@ runs:
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
+        set -euo pipefail
         cd orion
 
-        ZIP_URL="$(gh api repos/${{ inputs.orion-src }}/releases/latest --jq .zipball_url)"
-        curl -L -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "$ZIP_URL" -o orion.zip
+        ZIP_URL="$(
+          gh api "repos/${{ inputs.orion-src }}/releases/latest" \
+            --jq '.assets[]
+              | select(.name | test("^Orion_.*\\.zip$"))
+              | .browser_download_url' \
+            | head -n 1
+        )"
+
+        curl -fL \
+          -H "Authorization: Bearer ${GH_TOKEN}" \
+          -H "Accept: application/octet-stream" \
+          "$ZIP_URL" \
+          -o orion.zip
 
         rm -rf release
         mkdir -p release
         unzip -q orion.zip -d release
 
-        cp -R release/*/Orion.framework "$THEOS/lib/"
+        cp -R "$(find release -type d -name 'Orion.framework' -print -quit)" "$THEOS/lib/Orion.framework"
 
     - name: Update Theos
       if: steps.theos-cache.outputs.cache-hit == 'true'
