@@ -27,11 +27,14 @@ The following inputs are available (all are optional) with their default values:
       altlist-src: 'opa334/AltList'
       altlist-branch: 'main'
       comet: true
-      comet-src: 'waruhachi/Comet'
+      comet-src: 'ginsudev/Comet'
       comet-branch: 'main'
       orion: true
       orion-src: 'theos/orion'
       orion-branch: 'master'
+      shook: true
+      shook-src: 'ginsudev/Shook'
+      shook-branch: 'main'
 ```
 
 -   **`theos-src`**: Repository to clone Theos from.
@@ -53,6 +56,9 @@ The following inputs are available (all are optional) with their default values:
 -   **`orion`**: Whether to use Orion.
 -   **`orion-src`**: Repository to clone Orion from.
 -   **`orion-branch`**: Branch to clone Orion from.
+-   **`shook`**: Whether to use Shook.
+-   **`shook-src`**: Repository to clone Shook from.
+-   **`shook-branch`**: Branch to clone Shook from.
 
 ---
 
@@ -95,6 +101,9 @@ jobs:
                 orion: 'true'
                 orion-src: 'waruhachi/Orion'
                 orion-branch: 'main'
+                shook: 'true'
+                shook-src: 'waruhachi/Shook'
+                shook-branch: 'main'
 
             - name: Build Tweak
               run: |

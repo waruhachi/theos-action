@@ -82,6 +82,18 @@ inputs:
     description: "What branch to clone Orion from"
     required: false
     default: "master"
+  shook:
+    description: "Whether to install Shook"
+    required: false
+    default: "false"
+  shook-src:
+    description: "What repo to clone Shook from"
+    required: false
+    default: "ginsudev/Shook"
+  shook-branch:
+    description: "What branch to clone Shook from"
+    required: false
+    default: "main"
 
 runs:
   using: "composite"
@@ -245,6 +257,24 @@ runs:
         unzip -q orion.zip -d release
 
         cp -R "$(find release -type d -name 'Orion.framework' -print -quit)" "$THEOS/lib/Orion.framework"
+
+    - name: Setup Shook
+      if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.shook == 'true'
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.shook-src }}
+        ref: ${{ inputs.shook-branch }}
+        path: shook
+
+    - name: Install Shook
+      if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.shook == 'true'
+      shell: bash
+      run: |
+        cd shook
+        ./install.sh
+
+        mkdir -p "$THEOS/mod/shook"
+        cp -R . "$THEOS/mod/shook/"
 
     - name: Update Theos
       if: steps.theos-cache.outputs.cache-hit == 'true'
