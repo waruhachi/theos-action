@@ -11,7 +11,7 @@ Currently, **only macOS runners** are supported.
 The following inputs are available (all are optional) with their default values:
 
 ```yaml
-- uses: waruhachi/theos-action@v2.6.3
+- uses: waruhachi/theos-action@v2.6.5
   with:
       theos-src: 'theos/theos'
       theos-branch: 'master'
@@ -77,10 +77,10 @@ jobs:
 
         steps:
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
 
             - name: Setup Theos
-              uses: waruhachi/theos-action@v2.6.3
+              uses: waruhachi/theos-action@v2.6.5
               with:
                 theos-src: 'waruhachi/theos'
                 theos-branch: 'main'

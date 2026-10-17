@@ -138,14 +138,14 @@ runs:
 
     - name: Theos Cache
       id: theos-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: ${{ env.THEOS }}
         key: ${{ steps.cache-key.outputs.key }}
 
     - name: Setup Theos
       if: steps.theos-cache.outputs.cache-hit != 'true'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         repository: ${{ inputs.theos-src }}
         ref: ${{ inputs.theos-branch }}
@@ -154,7 +154,7 @@ runs:
 
     - name: Setup SDKs
       if: steps.theos-cache.outputs.cache-hit != 'true'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         repository: ${{ inputs.sdks-src }}
         ref: ${{ inputs.sdks-branch }}
@@ -163,7 +163,7 @@ runs:
 
     - name: Setup RemoteLog
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.remotelog == 'true'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         repository: ${{ inputs.remotelog-src }}
         ref: ${{ inputs.remotelog-branch }}
@@ -178,7 +178,7 @@ runs:
 
     - name: Setup LibGcUniversal
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.libgcuniversal == 'true'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         repository: ${{ inputs.libgcuniversal-src }}
         ref: ${{ inputs.libgcuniversal-branch }}
@@ -193,7 +193,7 @@ runs:
 
     - name: Setup AltList
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.altlist == 'true'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         repository: ${{ inputs.altlist-src }}
         ref: ${{ inputs.altlist-branch }}
@@ -208,7 +208,7 @@ runs:
 
     - name: Setup Comet
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.comet == 'true'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         repository: ${{ inputs.comet-src }}
         ref: ${{ inputs.comet-branch }}
@@ -223,7 +223,7 @@ runs:
 
     - name: Setup Orion
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.orion == 'true'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         repository: ${{ inputs.orion-src }}
         ref: ${{ inputs.orion-branch }}
@@ -260,7 +260,7 @@ runs:
 
     - name: Setup Shook
       if: steps.theos-cache.outputs.cache-hit != 'true' && inputs.shook == 'true'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         repository: ${{ inputs.shook-src }}
         ref: ${{ inputs.shook-branch }}
